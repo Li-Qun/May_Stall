@@ -17,6 +17,7 @@
 
 @synthesize window;
 @synthesize navigationController;
+@synthesize arrary_mul=arrary_mul;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

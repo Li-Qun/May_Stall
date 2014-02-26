@@ -18,7 +18,12 @@
 #import "TMQuiltView.h"
 #import "TMPhotoQuiltViewCell.h"
 
-#import "UrlImageView.h"
+#import "SDImageCache.h"
+
+#import "MayAppDelegate.h"
+
+
+#import "UIImageView+WebCache.h"
 @interface HomeViewController ()
 
 
@@ -45,7 +50,8 @@
 
 
     [super viewDidLoad];
-    
+    app = (MayAppDelegate *)[[UIApplication sharedApplication] delegate];
+    app.arrary_mul=[[NSMutableArray alloc]init];
     [self setTabNavigationBarTitleWithText:@"home"];
     
     //适配ios7
@@ -53,9 +59,9 @@
     {
         self.navigationController.navigationBar.translucent = NO;
     }
-    //[self getMainArray];
-
- 
+    [self getMainArray];
+    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, VIEW_HEIGHT-330, 320, 480)];
+    
     
     
     //测试 存取账号密码
@@ -90,9 +96,16 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.tabBarController.navigationController.navigationBarHidden = NO;
-     [self getMainArray];
+    [self.view addSubview:qtmquitView];
 }
-
+-(void)viewDidDisappear:(BOOL)animated
+{
+    for (id obj in self.view.subviews) {
+        if ([obj isKindOfClass:[TMQuiltView class]] ) {
+            [obj removeFromSuperview];
+        }
+    }
+}
 #pragma -mark
 #pragma  method get data by url
 - (void)getMainArray
@@ -112,24 +125,22 @@
     else
     {
         
-        NSString *string=[NSString stringWithFormat:@"%@content/read_lst",Root];
-        
+        NSString *string=[NSString stringWithFormat:@"%@",kBASEURL];
         NSURL *url = [ NSURL URLWithString :  string ];
         __block ASIFormDataRequest *request = [ ASIFormDataRequest requestWithURL :url];
         [request setRequestMethod:@"POST"];
-        [request setPostValue:@"2" forKey:@"filter_category_id"];
-        [request setPostValue:@"0" forKey:@"filter_is_sticky"];
-        [request setPostValue:@"0" forKey:@"offset"];
+        [request setPostValue:kPRODCUTS forKey:kACTION];
+        [request setPostValue:@"" forKey:@"path"];
+        [request setPostValue:@"latest" forKey:@"type"];
         
         NSLog(@"%d",[request responseStatusCode]);
-       
         [request setCompletionBlock :^{
             NSString * response  =  [request responseString];
             SBJsonParser *parser = [[SBJsonParser alloc] init];
-            NSDictionary *jsonObj =[parser objectWithString: response];
-            NSArray *array = [jsonObj objectForKey:@"data"];
+            NSDictionary *array = [parser objectWithString:response];
             NSLog(@"%@",array);
-            [self creatWater:array];
+           [self creatWater:[array objectForKey:@"products"]];
+            
         }];
         [request setFailedBlock :^{
             NSLog(@"HTTP 响应码：%d",[request responseStatusCode]);
@@ -137,14 +148,17 @@
             NSLog ( @"error:%@" ,[error userInfo ]);
         }];
         [request startAsynchronous ];//异步
- 
+
     
     }
 }
 -(void)creatWater:(NSArray *)array
 {   arr_images=[[NSArray alloc]init];
     arr_images=array;
-    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, VIEW_HEIGHT-330, 320, 480)];
+    for(int i=0;i<array.count;i++)
+    {
+        [app.arrary_mul addObject:[array objectAtIndex:i]];
+    }
 	qtmquitView.delegate = self;
 	qtmquitView.dataSource = self;
 	
@@ -245,72 +259,6 @@
 
 ///@@@@@@@判断当前是否有网络  判断了吗
 //////waterflow  start
-- (NSMutableArray *)images
-{
-    NSLog(@"%@",arr_images);
-    if (!images)
-	{
-      //  - (void)setImageWithURL:(NSURL *)url placeholderImage:(UIImage *)placeholder
-
-       // [self setImageWithURL:@"sds" placeholderImage:@"ss" ];
-        
-        
-        
-        
-        
-        
-        NSMutableArray *imageNames = [NSMutableArray array];
-        for(int i = 0; i < 10; i++) {
-            [imageNames addObject:[NSString stringWithFormat:@"he.jpeg"]];
-        }
-        images =imageNames ;
-    }
-    return images;
-}
-
-
-- (UIImage *)imageAtIndexPath:(NSIndexPath *)indexPath {
-    return [UIImage imageNamed:[self.images objectAtIndex:indexPath.row]];
-}
-
-- (NSInteger)quiltViewNumberOfCells:(TMQuiltView *)TMQuiltView {
-    return [self.images count];
-}
-
-- (TMQuiltViewCell *)quiltView:(TMQuiltView *)quiltView cellAtIndexPath:(NSIndexPath *)indexPath {
-    TMPhotoQuiltViewCell *cell = (TMPhotoQuiltViewCell *)[quiltView dequeueReusableCellWithReuseIdentifier:@"PhotoCell"];
-    if (!cell) {
-        cell = [[TMPhotoQuiltViewCell alloc] initWithReuseIdentifier:@"PhotoCell"];
-    }
-    
-    cell.photoView.image = [self imageAtIndexPath:indexPath];
-    cell.titleLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
-    return cell;
-}
-
-#pragma mark - TMQuiltViewDelegate
-
-- (NSInteger)quiltViewNumberOfColumns:(TMQuiltView *)quiltView {
-	
-    
-    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
-        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
-	{
-        return 3;
-    } else {
-        return 2;
-    }
-}
-
-- (CGFloat)quiltView:(TMQuiltView *)quiltView heightForCellAtIndexPath:(NSIndexPath *)indexPath
-{
-    return [self imageAtIndexPath:indexPath].size.height / [self quiltViewNumberOfColumns:quiltView];
-}
-
-- (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath
-{
-	NSLog(@"index:%d",indexPath.row);
-}
 
 
 //////waterflow  end
@@ -431,8 +379,8 @@
 //加载调用的方法
 -(void)getNextPageView
 {
-	for(int i = 0; i < 10; i++) {
-		[images addObject:[NSString stringWithFormat:@"2.jpeg" ]];
+	for(int i = 0; i < 5; i++) {
+		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
 	}
 	[qtmquitView reloadData];
     [self removeFooterView];
@@ -490,6 +438,89 @@
 	
 	return [NSDate date]; // should return date data source was last changed
 	
+}
+
+- (void)didReceiveMemoryWarning
+{
+    [super didReceiveMemoryWarning];
+    // Dispose of any resources that can be recreated.
+}
+
+- (NSMutableArray *)images
+{
+    if (!images)
+	{
+        NSMutableArray *imageNames = [NSMutableArray array];
+        for(int i = 0; i < 10; i++) {
+            [imageNames addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
+        }
+        images =imageNames  ;
+    }
+    return images;
+}
+
+
+- (UIImage *)imageAtIndexPath:(NSIndexPath *)indexPath {
+    return  [UIImage imageNamed:[self.images objectAtIndex:indexPath.row]];
+}
+
+- (NSInteger)quiltViewNumberOfCells:(TMQuiltView *)TMQuiltView {
+    return app.arrary_mul.count;
+}
+
+- (TMQuiltViewCell *)quiltView:(TMQuiltView *)quiltView cellAtIndexPath:(NSIndexPath *)indexPath {
+    TMPhotoQuiltViewCell *cell = (TMPhotoQuiltViewCell *)[quiltView dequeueReusableCellWithReuseIdentifier:@"PhotoCell"];
+    if (!cell) {
+        cell = [[TMPhotoQuiltViewCell alloc] initWithReuseIdentifier:@"PhotoCell"];
+    }
+    NSDictionary *dict=[[NSDictionary alloc]init];
+    dict=[app.arrary_mul objectAtIndex:indexPath.row];
+    NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
+    
+    
+    [cell.photoView setImageWithURL:[NSURL URLWithString: url]
+placeholderImage:[UIImage imageNamed:@"moren.png"]
+success:^(UIImage *image) {NSLog(@"资讯置顶图片显示成功OK");}
+failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
+    cell.titleLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
+    cell.contentLabel.text=@"dkfafl'lf'a;djfklajdfjadkfjkahdgfahg";
+    
+    
+    
+    UIView *back=[[UIView alloc]init];
+    back.backgroundColor=[UIColor blueColor];
+    back.frame=CGRectMake(0, 0, 145.0, 50);
+    
+    [cell.view addSubview:back];
+    
+    
+    
+    return cell;
+    
+}
+
+#pragma mark - TMQuiltViewDelegate
+
+- (NSInteger)quiltViewNumberOfColumns:(TMQuiltView *)quiltView {
+	
+    
+    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
+        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
+	{
+        return 3;
+    } else {
+        return 2;
+    }
+}
+
+- (CGFloat)quiltView:(TMQuiltView *)quiltView heightForCellAtIndexPath:(NSIndexPath *)indexPath
+{
+    return [self imageAtIndexPath:indexPath].size.height / [self quiltViewNumberOfColumns:quiltView];
+}
+
+- (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath
+{
+	NSLog(@"index:%d",indexPath.row);
 }
 
 

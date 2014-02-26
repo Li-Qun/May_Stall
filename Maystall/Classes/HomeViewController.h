@@ -28,8 +28,9 @@
 
 #import "TMQuiltView.h"
 #import "TMPhotoQuiltViewCell.h"
-#import "UrlImageView.h"
-@interface HomeViewController : BaseViewController<SGFocusImageFrameDelegate,EGORefreshTableDelegate,AOTwoWaterViewDelegate,UIScrollViewDelegate,TMQuiltViewDataSource,TMQuiltViewDelegate,SDWebImageManagerDelegate>
+
+#import "MayAppDelegate.h"
+@interface HomeViewController : BaseViewController<SGFocusImageFrameDelegate,EGORefreshTableDelegate,AOTwoWaterViewDelegate,UIScrollViewDelegate,TMQuiltViewDataSource,TMQuiltViewDelegate>
 {
     NSMutableArray *advList;
     
@@ -53,6 +54,8 @@
     TMQuiltView *qtmquitView;
     NSMutableArray *images;
     NSArray *arr_images;
+    
+    MayAppDelegate * app;
 }
 
 @property(nonatomic,retain)AOTwoWaterView *aoView;

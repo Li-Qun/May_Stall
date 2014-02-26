@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #define kBASEURL    @"http://www.maystall.com/index.php?route=mobile/ajax/"
+#define webImageURL                    @"http://www.maystall.com/"
 
 #define kACTION         @"action"
 #define kCATEGORY       @"categorys"
@@ -34,6 +35,7 @@
 
 //==========//阅钓测试
 #define Root @"http://42.96.192.186/app/mgz/"
+#define Image_Head @"http://42.96.192.186/upload/"
 
 //==========//阅钓测试
 

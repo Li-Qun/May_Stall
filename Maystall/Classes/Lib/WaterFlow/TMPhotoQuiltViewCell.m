@@ -26,12 +26,12 @@ const CGFloat kTMPhotoQuiltViewMargin = 0;
 
 @synthesize photoView = _photoView;
 @synthesize titleLabel = _titleLabel;
-//@synthesize view = _view;
+@synthesize view = _view;
 
 - (void)dealloc {
     [_photoView release], _photoView = nil;
     [_titleLabel release], _titleLabel = nil;
-//    [_view release],_view = nil;
+   [_view release],_view = nil;
     [_contentLabel release], _contentLabel = nil;
     [super dealloc];
 }
@@ -77,14 +77,20 @@ const CGFloat kTMPhotoQuiltViewMargin = 0;
     return _contentLabel;
 }
 
-//- (UIView *)view {
-//    
-//    return _view;
-//}
+- (UIView *)view {
+    
+    if(!_view)
+    {
+        _view=[[UIView alloc]init];
+        _view.backgroundColor=[UIColor whiteColor];
+        [self addSubview:_view];
+    }
+    return _view;
+}
 
 - (void)layoutSubviews {
-    self.photoView.frame = CGRectInset(self.bounds, 0, 0);
-    self.titleLabel.frame = CGRectMake(kTMPhotoQuiltViewMargin, self.bounds.size.height - 20 - kTMPhotoQuiltViewMargin, self.bounds.size.width - 2 * kTMPhotoQuiltViewMargin, 20);
+    self.photoView.frame = CGRectMake(0, 0, self.bounds.size.width, self.bounds.size.height);
+    self.view.frame = CGRectMake(kTMPhotoQuiltViewMargin, self.bounds.size.height - 20 - kTMPhotoQuiltViewMargin, self.bounds.size.width - 2 * kTMPhotoQuiltViewMargin, 20);
     self.contentLabel.frame = CGRectMake(kTMPhotoQuiltViewMargin, self.bounds.size.height - 40 - kTMPhotoQuiltViewMargin, self.bounds.size.width - 2 * kTMPhotoQuiltViewMargin, 20);
 }
 

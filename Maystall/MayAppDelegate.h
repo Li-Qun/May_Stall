@@ -11,9 +11,11 @@
 @interface MayAppDelegate : NSObject <UIApplicationDelegate,UINavigationControllerDelegate>{
     UIWindow *window;
     UINavigationController *navigationController;
+    NSMutableArray *arrary_mul;
 }
 
 @property (retain, nonatomic) IBOutlet UIWindow *window;
 @property (nonatomic, retain) IBOutlet UINavigationController *navigationController;
+@property (nonatomic,retain)NSMutableArray *arrary_mul;
 
 @end

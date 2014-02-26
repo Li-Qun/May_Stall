@@ -76,7 +76,7 @@
         NSURL *url = [ NSURL URLWithString :  string ];
         __block ASIFormDataRequest *request = [ ASIFormDataRequest requestWithURL :url];
         [request setRequestMethod:@"POST"];
-        [request setPostValue:kCATEGORY forKey:kACTION];
+        [request setPostValue:@"allcategory" forKey:kACTION];
     
         NSLog(@"%d",[request responseStatusCode]);
         [request setCompletionBlock :^{

@@ -370,11 +370,13 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
     
     return kTMQuiltViewDefaultCellHeight;
 }
-
+//看这里看这里看这里看这里看这里看这里看这里看这里看这里看这里===================================
 - (CGFloat)cellMargin:(TMQuiltViewMarginType)marginType {
     if ([self.delegate respondsToSelector:@selector(quiltViewMargin:marginType:)]) {
         return [self.delegate quiltViewMargin:self marginType:marginType];
     }
+    if(marginType==TMQuiltViewCellMarginRows )
+        return 50.0;
     return kTMQuiltViewDefaultMargin;
 }
 
@@ -390,8 +392,8 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
 - (CGRect)rectForCellAtIndex:(int)index column:(int)column {
     
     NSInteger cellTop = [[self.cellTopByColumn[column] objectAtIndex:index] floatValue];
-    float height = [self heightForCellAtIndexPath:[self.indexPathsByColumn[column] objectAtIndex:index]];
 
+    float height = [self heightForCellAtIndexPath:[self.indexPathsByColumn[column] objectAtIndex:index]];
     return CGRectMake(column * ([self cellWidth] + [self cellMargin:TMQuiltViewCellMarginColumns]) + [self cellMargin:TMQuiltViewCellMarginLeft],
                              cellTop,
                              [self cellWidth], height);
