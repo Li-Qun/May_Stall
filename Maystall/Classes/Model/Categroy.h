@@ -9,12 +9,12 @@
 #import <Foundation/Foundation.h>
 
 @interface Categroy : NSObject{
-    NSString *_image;
-    NSString *_category_id;
-    NSString *_name;
-    NSString *_data_added;
-    NSString *_data_modified;
-    NSString *_description;
+    NSString *image;
+    NSString *category_id;
+    NSString *name;
+    NSString *data_added;
+    NSString *data_modified;
+    NSString *description;
 }
 
 @property (strong,nonatomic) NSString *image;

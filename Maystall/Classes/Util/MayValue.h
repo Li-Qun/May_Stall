@@ -11,6 +11,7 @@
 
 #define VIEW_HEIGHT         [UIScreen mainScreen].bounds.size.height - [UIApplication sharedApplication].statusBarFrame.size.height -44
 
+
 @interface MayValue : NSObject
 
 @end

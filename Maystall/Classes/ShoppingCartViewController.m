@@ -42,6 +42,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.tabBarController.navigationController.navigationBarHidden = NO;
+    [self setTabNavigationBarTitleWithText:@"Cart"];
 }
 
 - (void)didReceiveMemoryWarning

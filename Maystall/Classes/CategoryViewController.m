@@ -17,6 +17,10 @@
 #import "ASIFormDataRequest.h"
 #import <QuartzCore/QuartzCore.h>
 
+#import "Categroy.h"
+#import "MayValue.h"
+#import "UIImageView+WebCache.h"
+#import "CategoryDetailViewController.h"
 #define BUTTON_TAG 10000
 
 @interface CategoryViewController ()
@@ -43,13 +47,13 @@
     _categoryArray = [[NSMutableArray alloc] init];
     
     [self getCategory];
-    [self mainView];
+  //  [self mainView];
 }
 
 - (void)viewWillAppear:(BOOL)animated
 {
     self.tabBarController.navigationController.navigationBarHidden = NO;
-    [self setTabNavigationBarTitleWithText:@"XX"];
+    [self setTabNavigationBarTitleWithText:@"Category"];
 }
 
 
@@ -84,145 +88,108 @@
             SBJsonParser *parser = [[SBJsonParser alloc] init];
             NSArray *array = [parser objectWithString:response];
             NSLog(@"%@",array);
-
+            [self mainView:array];
         }];
         [request setFailedBlock :^{
-            NSLog(@"HTTP 响应码：%d",[request responseStatusCode]);
-            NSError *error = [request error ];
-            NSLog ( @"error:%@" ,[error userInfo ]);
+//            NSLog(@"HTTP 响应码：%d",[request responseStatusCode]);
+//            NSError *error = [request error ];
+//            NSLog ( @"error:%@" ,[error userInfo ]);
         }];
         [request startAsynchronous ];//异步
     }
-    /*
-    NSDictionary *parameters = [NSDictionary dictionaryWithObjectsAndKeys:kCATEGORY,kACTION, nil];
-    
-    [[AFOSCClient sharedClient] postPath:kBASEURL parameters:parameters success:^(AFHTTPRequestOperation *operation, id responseObject) {
-        
-        NSString *response = operation.responseString;
-        NSLog(@"response string :%@",response);
-        SBJsonParser *parser = [[SBJsonParser alloc] init];
-        NSArray *array = [parser objectWithString:response];
-        
-        
-    } failure:^(AFHTTPRequestOperation *operation, NSError *error) {
-        NSLog(@"error is %@",error);
-    }];*/
-
+ 
 }
+
 
 #pragma -mark button action
 - (void)btnSelected:(id)sender
 {
     UIButton *btn=(UIButton *)sender;
-    NSLog(@"%d",btn.tag);
+    NSLog(@"%d",btn.tag-BUTTON_TAG);
+    CategoryDetailViewController *view = [[CategoryDetailViewController alloc] init];
+    BOOL Flag=NO;
+    for(int i=0;i<name_CategotyDetail.count;i++)
+    {
+         NSDictionary *dict=[name_CategotyDetail objectAtIndex:i];
+          NSArray *dict_child=[dict objectForKey:@"children"];
+        for(int j=0;j<dict_child.count;j++)
+        {
+            if([[[dict_child objectAtIndex:j]objectForKey:@"category_id"]integerValue ]==btn.tag-BUTTON_TAG)
+            {
+                view.name_CategoryDetail=[[dict_child objectAtIndex:j]objectForKey:@"name"];
+                Flag=YES;
+                break;
+            }
+        }
+        if(Flag)
+            break;
+    }
+    [self.navigationController pushViewController:view animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 #pragma -mark add subview
-- (void)mainView
-{
-    //第一条
-    clothView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 120)];
-    
-    clothTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-    clothTitle.backgroundColor = [UIColor clearColor];
-    clothTitle.text = @"Cloth";
-    
-    clothBtn = [[UIButton alloc] initWithFrame:CGRectMake(290, 0, 30, 30)];
-    [clothBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateHighlighted];
-    [clothBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateNormal];
-    
-    clothScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 30, 320, 90)];
-    [clothScroll setContentSize:CGSizeMake(600, 90)];
-    
-    for (int i = 0; i < 6; i++) {
-        UIButton *image = [[UIButton alloc] initWithFrame:CGRectMake(0+i*100, 0, 100, 90)];
-        [image setImage:[UIImage imageNamed:@"1.jpeg" ] forState:UIControlStateNormal];
-        [image setTag:BUTTON_TAG +i];
-        image.backgroundColor = [UIColor yellowColor];
-        [image addTarget:self action:@selector(btnSelected:) forControlEvents:UIControlEventTouchUpInside];
+- (void)mainView:(NSArray*)array
+{   name_CategotyDetail=array;
+    UIScrollView *scrollView_back=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, VIEW_HEIGHT-44)];
+    scrollView_back.backgroundColor=[UIColor clearColor];
+    scrollView_back.contentSize=CGSizeMake(0,750);
+    [self.view addSubview:scrollView_back];
+    for(int j=0;j<array.count;j++)
+    {
         
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 70, 40, 20)];
-        label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"icon_image_label"]];
-        label.text = @"test";
-        label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont fontWithName:@"Helvetica" size:9];
-        label.textColor = [UIColor whiteColor];
-        [image addSubview:label];
-        [clothScroll addSubview:image];
+        NSDictionary *dict=[array objectAtIndex:j];
+        category.name=[dict objectForKey:@"name"];
+        category.categroy_id=[dict objectForKey:@"category_id"];
+        NSArray *dict_child=[dict objectForKey:@"children"];
+
+        clothView = [[UIView alloc] initWithFrame:CGRectMake(0, 120*j, 320, 120)];
+        
+        clothTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 250, 30)];
+        clothTitle.backgroundColor = [UIColor clearColor];
+        clothTitle.text =[dict objectForKey:@"name"];
+        
+        clothBtn = [[UIButton alloc] initWithFrame:CGRectMake(290, 0, 30, 30)];
+        [clothBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateHighlighted];
+        [clothBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateNormal];
+        
+        clothScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 30, 320, 90)];
+        [clothScroll setContentSize:CGSizeMake(600, 90)];
+        for (int i = 0; i < dict_child.count; i++) {
+            
+            UIButton *image = [[UIButton alloc] initWithFrame:CGRectMake(0+i*100, 0, 100, 90)];
+            
+            UIImageView *imageView_btn=[[UIImageView alloc]initWithFrame:image.frame];
+            imageView_btn.image=[UIImage imageNamed:@"Ocupy.png"];
+//             NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL, [[dict_child objectAtIndex:i]objectForKey:@"children"]] ;
+//            [imageView_btn setImageWithURL:[NSURL URLWithString: url]
+//                           placeholderImage:[UIImage imageNamed:@"moren.png"]
+//                                    success:^(UIImage *image) { NSLog(@" 图片显示失败YES");}
+//                                    failure:^(NSError *error) {NSLog(@" 图片显示失败NO");}];
+            
+            [image setImage:imageView_btn.image forState:UIControlStateNormal];
+            
+            [image setTag:BUTTON_TAG +[[[dict_child objectAtIndex:i]objectForKey:@"category_id"]integerValue ]];
+            
+            
+            image.backgroundColor = [UIColor clearColor];
+            [image addTarget:self action:@selector(btnSelected:) forControlEvents:UIControlEventTouchUpInside];
+            
+            UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 70, 40, 20)];
+            label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"icon_image_label"]];
+            label.text =[[dict_child objectAtIndex:i]objectForKey:@"name"];
+            label.textAlignment = NSTextAlignmentCenter;
+            label.font = [UIFont fontWithName:@"Helvetica" size:9];
+            label.textColor = [UIColor whiteColor];
+            [image addSubview:label];
+            [clothScroll addSubview:image];
+        }
+        [clothView addSubview:clothTitle];
+        [clothView addSubview:clothBtn];
+        [clothView addSubview:clothScroll];
+        [scrollView_back addSubview:clothView];
     }
     
-    //第二条
-    shoesView = [[UIView alloc] initWithFrame:CGRectMake(0, 120, 320, 120)];
-    
-    shoesTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-    shoesTitle.backgroundColor = [UIColor clearColor];
-    shoesTitle.text = @"Shoes";
-    
-    shoesBtn = [[UIButton alloc] initWithFrame:CGRectMake(290, 0, 30, 30)];
-    [shoesBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateHighlighted];
-    [shoesBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateNormal];
-    
-    shoesScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 30, 320, 90)];
-    [shoesScroll setContentSize:CGSizeMake(480, 90)];
-    
-    for (int i = 0; i < 6; i++) {
-        UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0+i*100, 0, 100, 90)];
-        [image setImage:[UIImage imageNamed:@"1.jpeg"]];
-        image.backgroundColor = [UIColor yellowColor];
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 70, 40, 20)];
-        label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"icon_image_label"]];
-        label.text = @"test";
-        label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont fontWithName:@"Helvetica" size:9];
-        label.textColor = [UIColor whiteColor];
-        [image addSubview:label];
-        [shoesScroll addSubview:image];
-    }
-    
-    //第三条
-    bagView = [[UIView alloc] initWithFrame:CGRectMake(0, 240, 320, 120)];
-    
-    bagTitle = [[UILabel alloc] initWithFrame:CGRectMake(0, 0, 50, 30)];
-    bagTitle.backgroundColor = [UIColor clearColor];
-    bagTitle.text = @"Bag";
-    
-    bagBtn = [[UIButton alloc] initWithFrame:CGRectMake(290, 0, 30, 30)];
-    [bagBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateHighlighted];
-    [bagBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateNormal];
-    bagScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 30, 320, 90)];
-    [bagScroll setContentSize:CGSizeMake(480, 90)];
-    bagScroll.backgroundColor = [UIColor yellowColor];
-    
-    for (int i = 0; i < 6; i++) {
-        UIImageView *image = [[UIImageView alloc] initWithFrame:CGRectMake(0+i*100, 0, 100, 90)];
-        [image setImage:[UIImage imageNamed:@"1.jpeg"]];
-        image.backgroundColor = [UIColor yellowColor];
-        
-        UILabel *label = [[UILabel alloc] initWithFrame:CGRectMake(60, 70, 40, 20)];
-        label.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"icon_image_label"]];
-        label.text = @"test";
-        label.textAlignment = NSTextAlignmentCenter;
-        label.font = [UIFont fontWithName:@"Helvetica" size:9];
-        label.textColor = [UIColor whiteColor];
-        [image addSubview:label];
-        [bagScroll addSubview:image];
-    }
-    
-    [clothView addSubview:clothTitle];
-    [clothView addSubview:clothBtn];
-    [clothView addSubview:clothScroll];
-    [self.view addSubview:clothView];
-    
-    [shoesView addSubview:shoesTitle];
-    [shoesView addSubview:shoesBtn];
-    [shoesView addSubview:shoesScroll];
-    [self.view addSubview:shoesView];
-    
-    [bagView addSubview:bagTitle];
-    [bagView addSubview:bagBtn];
-    [bagView addSubview:bagScroll];
-    [self.view addSubview:bagView];
 }
 
 

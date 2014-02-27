@@ -10,11 +10,11 @@
 
 @implementation Categroy
 
-@synthesize image = _image;
-@synthesize categroy_id = _category_id;
-@synthesize name = _name;
-@synthesize data_added = _data_added;
-@synthesize data_modified = _data_modified;
-@synthesize description = _description;
+@synthesize image = image;
+@synthesize categroy_id =category_id;
+@synthesize name = name;
+@synthesize data_added = data_added;
+@synthesize data_modified = data_modified;
+@synthesize description = description;
 
 @end

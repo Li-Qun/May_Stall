@@ -376,7 +376,7 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
         return [self.delegate quiltViewMargin:self marginType:marginType];
     }
     if(marginType==TMQuiltViewCellMarginRows )
-        return 50.0;
+        return 80.0;
     return kTMQuiltViewDefaultMargin;
 }
 

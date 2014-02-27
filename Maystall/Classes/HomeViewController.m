@@ -52,6 +52,7 @@
     [super viewDidLoad];
     app = (MayAppDelegate *)[[UIApplication sharedApplication] delegate];
     app.arrary_mul=[[NSMutableArray alloc]init];
+    app.arrary_height=[[NSMutableArray alloc]init];
     [self setTabNavigationBarTitleWithText:@"home"];
     
     //适配ios7
@@ -59,9 +60,10 @@
     {
         self.navigationController.navigationBar.translucent = NO;
     }
-    [self getMainArray];
-    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, VIEW_HEIGHT-330, 320, 480)];
-    
+    [self getMainArray:@"latest"];                                    //VIEW_HEIGHT-178-44
+    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 178 , 320, VIEW_HEIGHT-178-44)];
+    qtmquitView.contentSize=CGSizeMake(0, 480);
+   // qtmquitView.contentSize=CGSizeMake(0, 1000);
     
     
     //测试 存取账号密码
@@ -96,6 +98,7 @@
 - (void)viewWillAppear:(BOOL)animated
 {
     self.tabBarController.navigationController.navigationBarHidden = NO;
+    [self setTabNavigationBarTitleWithText:@"Home"];
     [self.view addSubview:qtmquitView];
 }
 -(void)viewDidDisappear:(BOOL)animated
@@ -108,7 +111,7 @@
 }
 #pragma -mark
 #pragma  method get data by url
-- (void)getMainArray
+- (void)getMainArray :(NSString *)est_str
 {
     //检查网络是否存在 如果不存在 则弹出提示
     BOOL isNetWork=[CheckNetwork isExistenceNetwork];
@@ -131,7 +134,7 @@
         [request setRequestMethod:@"POST"];
         [request setPostValue:kPRODCUTS forKey:kACTION];
         [request setPostValue:@"" forKey:@"path"];
-        [request setPostValue:@"latest" forKey:@"type"];
+        [request setPostValue:est_str forKey:@"type"];
         
         NSLog(@"%d",[request responseStatusCode]);
         [request setCompletionBlock :^{
@@ -140,6 +143,7 @@
             NSDictionary *array = [parser objectWithString:response];
             NSLog(@"%@",array);
            [self creatWater:[array objectForKey:@"products"]];
+            [self.view addSubview:qtmquitView];
             
         }];
         [request setFailedBlock :^{
@@ -153,32 +157,72 @@
     }
 }
 -(void)creatWater:(NSArray *)array
-{   arr_images=[[NSArray alloc]init];
-    arr_images=array;
-    for(int i=0;i<array.count;i++)
-    {
-        [app.arrary_mul addObject:[array objectAtIndex:i]];
-    }
-	qtmquitView.delegate = self;
-	qtmquitView.dataSource = self;
-	
-	[self.view addSubview:qtmquitView];
-	
-	[qtmquitView reloadData];
-    [self createHeaderView];
-	[self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
+{
+ 
+    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
+        for(int i=0;i<array.count;i++)
+        {
+            [app.arrary_mul addObject:[array objectAtIndex:i]];
+        }
+        for(int i=0;i<array.count;i++)
+        {
+            NSDictionary *dict=[[NSDictionary alloc]init];
+            dict=[app.arrary_mul objectAtIndex:i];
+            
+            NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
+            UIImageView *imageView=[[UIImageView alloc]init];
+            //        [imageView setImageWithURL:[NSURL URLWithString: url]];
+            //     [app.arrary_height addObject:[NSString stringWithFormat:@"%f",imageView.image.size.height]];
+            [imageView setImageWithURL:[NSURL URLWithString: url]
+                      placeholderImage:[UIImage imageNamed:@"moren.png"]
+                               success:^(UIImage *image) { [app.arrary_height addObject:[NSString stringWithFormat:@"%f",image.size.height]];if(app.arrary_height.count==array.count)
+                               {
+                                   qtmquitView.delegate = self;
+                                   qtmquitView.dataSource = self;
+                                   [self.view addSubview:qtmquitView];
+                                   [qtmquitView reloadData];
+                                   [self createHeaderView];
+                                   
+                               }
+                                    NSLog(@"图片显示成功OK " );}
+                               failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
+            }
+        
+        
+        dispatch_async(dispatch_get_main_queue(), ^{//主线程
+            
+        
+            
+//            NSLog(@"%@",app.arrary_height);
+//            qtmquitView.delegate = self;
+//            qtmquitView.dataSource = self;
+//            
+//            [self.view addSubview:qtmquitView];
+//            [qtmquitView reloadData];
+//            [self createHeaderView];
+            
+        });
+    });
+    
+
+  
+	//[self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
 }
 #pragma -mark button action
 - (void)newwestBtnSelected
 {
     _newestBtn.selected = YES;
     _bestSellerBtn.selected = NO;
+    [self getMainArray:@"latest"];
+    [qtmquitView reloadData];
 }
 
 - (void)bestsellerBtnSelected
 {
     _newestBtn.selected = NO;
     _bestSellerBtn.selected = YES;
+    [self getMainArray:@"hot"];
+    [qtmquitView reloadData];
 }
 #pragma -mark add SubView
 
@@ -379,12 +423,12 @@
 //加载调用的方法
 -(void)getNextPageView
 {
-	for(int i = 0; i < 5; i++) {
-		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
-	}
-	[qtmquitView reloadData];
-    [self removeFooterView];
-    [self testFinishedLoadData];
+//	for(int i = 0; i < 5; i++) {
+//		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
+//	}
+//	[qtmquitView reloadData];
+//    [self removeFooterView];
+//    [self testFinishedLoadData];
 }
 
 #pragma mark -
@@ -446,50 +490,80 @@
     // Dispose of any resources that can be recreated.
 }
 
-- (NSMutableArray *)images
-{
-    if (!images)
-	{
-        NSMutableArray *imageNames = [NSMutableArray array];
-        for(int i = 0; i < 10; i++) {
-            [imageNames addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
-        }
-        images =imageNames  ;
-    }
-    return images;
-}
+//- (NSMutableArray *)images
+//{
+//    if (!images)
+//	{
+//        NSMutableArray *imageNames = [NSMutableArray array];
+//        for(int i = 0; i < 10; i++) {
+//            [imageNames addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
+//        }
+//        images =imageNames  ;
+//    }
+//    return images;
+//}
 
 
-- (UIImage *)imageAtIndexPath:(NSIndexPath *)indexPath {
-    return  [UIImage imageNamed:[self.images objectAtIndex:indexPath.row]];
-}
+//- (UIImage *)imageAtIndexPath:(NSIndexPath *)indexPath {
+//    return  [UIImage imageNamed:[self.images objectAtIndex:indexPath.row]];
+//}
 
 - (NSInteger)quiltViewNumberOfCells:(TMQuiltView *)TMQuiltView {
     return app.arrary_mul.count;
 }
 
 - (TMQuiltViewCell *)quiltView:(TMQuiltView *)quiltView cellAtIndexPath:(NSIndexPath *)indexPath {
+    
     TMPhotoQuiltViewCell *cell = (TMPhotoQuiltViewCell *)[quiltView dequeueReusableCellWithReuseIdentifier:@"PhotoCell"];
     if (!cell) {
         cell = [[TMPhotoQuiltViewCell alloc] initWithReuseIdentifier:@"PhotoCell"];
     }
     NSDictionary *dict=[[NSDictionary alloc]init];
     dict=[app.arrary_mul objectAtIndex:indexPath.row];
+    NSLog(@"======%d",indexPath.row);  
     NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
     
     
     [cell.photoView setImageWithURL:[NSURL URLWithString: url]
-placeholderImage:[UIImage imageNamed:@"moren.png"]
-success:^(UIImage *image) {NSLog(@"资讯置顶图片显示成功OK");}
-failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
+                    placeholderImage:[UIImage imageNamed:@"moren.png"]
+                            success:^(UIImage *image) {  NSLog(@"图片显示成功OK%d ",indexPath.row);}
+                    failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
     cell.titleLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
-    cell.contentLabel.text=@"dkfafl'lf'a;djfklajdfjadkfjkahdgfahg";
-    
-    
-    
+ 
     UIView *back=[[UIView alloc]init];
-    back.backgroundColor=[UIColor blueColor];
-    back.frame=CGRectMake(0, 0, 145.0, 50);
+    back.backgroundColor=[UIColor whiteColor];
+    back.frame=CGRectMake(0, 0, 145.0, 80);
+    
+    UILabel *label_name=[[UILabel alloc]initWithFrame:CGRectMake(4, 0, 136.0, 50)];
+    label_name.backgroundColor=[UIColor clearColor];
+    label_name.textColor=TAB_COLOR_DARK;
+    label_name.font=[UIFont fontWithName:@"Helvetica" size:13.0];
+    label_name.numberOfLines = 0;
+    label_name.lineBreakMode = NSLineBreakByTruncatingTail;//dkfd....
+    label_name.text=[dict objectForKey:@"name"];
+    [back addSubview:label_name];
+    
+    UIImageView *price_ImageView=[[UIImageView alloc]initWithFrame:CGRectMake(-1, 49,82, 22)];
+    price_ImageView.image=[UIImage imageNamed:@"price_Label.png"];
+    UILabel *price_label=[[UILabel alloc]initWithFrame:CGRectMake(20,2, 59, 17)];
+    price_label.textColor=TAB_COLOR_LIGHT;
+    price_label.backgroundColor=[UIColor clearColor];
+    price_label.text=[dict objectForKey:@"price"];
+    price_label.font=[UIFont fontWithName:@"Helvetica" size:12.0];
+    [price_ImageView addSubview:price_label];
+    [back addSubview:price_ImageView];
+    
+    UIImageView *love_imageView=[[UIImageView alloc]initWithFrame:CGRectMake(95, 52, 20, 17)];
+    love_imageView.image=[UIImage imageNamed:@"icon_product_favorite_normal.png"];
+    [back addSubview:love_imageView];
+    UILabel *love_total=[[UILabel alloc]initWithFrame:CGRectMake(116, 52, 28, 17)];
+    love_total.backgroundColor=[UIColor clearColor];
+    love_total.textColor=TAB_COLOR_LIGHT;
+    love_total.font=[UIFont fontWithName:@"Helvetica" size:12.0];
+    love_total.text=[dict objectForKey:@"liked"];
+    [back addSubview:love_total];
+    
+    
     
     [cell.view addSubview:back];
     
@@ -504,18 +578,20 @@ failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
 - (NSInteger)quiltViewNumberOfColumns:(TMQuiltView *)quiltView {
 	
     
-    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
-        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
-	{
-        return 3;
-    } else {
-        return 2;
-    }
+//    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
+//        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
+//	{
+//        return 2;
+//    }
+//    else {
+//        return 3;
+//    }
+    return 2;
 }
 
 - (CGFloat)quiltView:(TMQuiltView *)quiltView heightForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [self imageAtIndexPath:indexPath].size.height / [self quiltViewNumberOfColumns:quiltView];
+    return [[app.arrary_height objectAtIndex:indexPath.row] integerValue] / [self quiltViewNumberOfColumns:quiltView];
 }
 
 - (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath

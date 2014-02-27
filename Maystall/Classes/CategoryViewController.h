@@ -12,8 +12,8 @@
 
 #import "AFOSCClient.h"
 #import "AFHTTPRequestOperation.h"
-
-@interface CategoryViewController : BaseViewController{
+#import "Categroy.h"
+@interface CategoryViewController : BaseViewController<UIScrollViewDelegate>{
     //数据
     NSMutableArray *advList;
     
@@ -34,6 +34,8 @@
     UIScrollView *bagScroll;
     
     NSMutableArray *_categoryArray;
+    Categroy *category;
+    NSArray *name_CategotyDetail;
 }
 
 @property (strong,nonatomic) NSMutableArray *categoryArray;
