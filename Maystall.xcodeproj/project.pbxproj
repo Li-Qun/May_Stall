@@ -199,6 +199,7 @@
 		71FEDBDF1827AD9E00ABF0A8 /* radiobtn_bg@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 71FEDBDB1827AD9E00ABF0A8 /* radiobtn_bg@2x.png */; };
 		71FEDBE01827AD9E00ABF0A8 /* radiobtn_selected.png in Resources */ = {isa = PBXBuildFile; fileRef = 71FEDBDC1827AD9E00ABF0A8 /* radiobtn_selected.png */; };
 		71FEDBE11827AD9E00ABF0A8 /* radiobtn_selected@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = 71FEDBDD1827AD9E00ABF0A8 /* radiobtn_selected@2x.png */; };
+		BB52444918C095840083C6D1 /* Singleton.m in Sources */ = {isa = PBXBuildFile; fileRef = BB52444718C095840083C6D1 /* Singleton.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		BB82D10718BF375800C5545B /* Ocupy.png in Resources */ = {isa = PBXBuildFile; fileRef = BB82D10618BF375800C5545B /* Ocupy.png */; };
 		BB82D10A18BF3DA000C5545B /* price_Label.png in Resources */ = {isa = PBXBuildFile; fileRef = BB82D10818BF3DA000C5545B /* price_Label.png */; };
 		BB82D10B18BF3DA000C5545B /* price_Label@2X.png in Resources */ = {isa = PBXBuildFile; fileRef = BB82D10918BF3DA000C5545B /* price_Label@2X.png */; };
@@ -544,6 +545,8 @@
 		71FEDBDB1827AD9E00ABF0A8 /* radiobtn_bg@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "radiobtn_bg@2x.png"; sourceTree = "<group>"; };
 		71FEDBDC1827AD9E00ABF0A8 /* radiobtn_selected.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = radiobtn_selected.png; sourceTree = "<group>"; };
 		71FEDBDD1827AD9E00ABF0A8 /* radiobtn_selected@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "radiobtn_selected@2x.png"; sourceTree = "<group>"; };
+		BB52444718C095840083C6D1 /* Singleton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Singleton.m; sourceTree = "<group>"; };
+		BB52444818C095840083C6D1 /* Singleton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Singleton.h; sourceTree = "<group>"; };
 		BB82D10618BF375800C5545B /* Ocupy.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = Ocupy.png; sourceTree = "<group>"; };
 		BB82D10818BF3DA000C5545B /* price_Label.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = price_Label.png; sourceTree = "<group>"; };
 		BB82D10918BF3DA000C5545B /* price_Label@2X.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "price_Label@2X.png"; sourceTree = "<group>"; };
@@ -1259,6 +1262,8 @@
 		BB82D10D18BF48D800C5545B /* PushAnotherVC */ = {
 			isa = PBXGroup;
 			children = (
+				BB52444818C095840083C6D1 /* Singleton.h */,
+				BB52444718C095840083C6D1 /* Singleton.m */,
 				714AC61E1821FE5C00B0051C /* ProductViewController.h */,
 				714AC61F1821FE5C00B0051C /* ProductViewController.m */,
 				BB82D10E18BF495C00C5545B /* CategoryDetailViewController.h */,
@@ -1654,6 +1659,7 @@
 				BEAEB50318AB52E4001C38E8 /* LoginViewController.m in Sources */,
 				BEA9E7F618A87B5700078C8F /* AFOSCClient.m in Sources */,
 				BEADA3D818A4DF9A003E10F5 /* AESCrypt.m in Sources */,
+				BB52444918C095840083C6D1 /* Singleton.m in Sources */,
 				71B234A21867FF4E002027FC /* DataInfo.m in Sources */,
 				71B33957182A4CBB00342243 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				71B2347E1867D755002027FC /* ASIAuthenticationDialog.m in Sources */,

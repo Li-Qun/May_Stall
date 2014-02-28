@@ -19,6 +19,10 @@
 @synthesize navigationController;
 @synthesize arrary_mul=arrary_mul;
 @synthesize arrary_height=arrary_height;
+@synthesize lastestBtn_height=lastestBtn_height;
+@synthesize lastestBtn=lastestBtn;
+@synthesize hotestBtn=hotestBtn;
+@synthesize hotestBtn_height=hotestBtn_height;
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
 {

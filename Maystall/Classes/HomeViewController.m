@@ -522,7 +522,6 @@
     }
     NSDictionary *dict=[[NSDictionary alloc]init];
     dict=[app.arrary_mul objectAtIndex:indexPath.row];
-    NSLog(@"======%d",indexPath.row);  
     NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
     
     

@@ -12,10 +12,13 @@
 #import "EGORefreshTableFooterView.h"
 #import "TMQuiltView.h"
 #import "TMPhotoQuiltViewCell.h"
+#import "MayAppDelegate.h"
+
 
 @interface CategoryDetailViewController : BaseViewController<EGORefreshTableDelegate,UIScrollViewDelegate,TMQuiltViewDataSource,TMQuiltViewDelegate>
 {
     //UIButton
+    BOOL LastestOrHotest;//yes is Lastest
     UIButton *_newestBtn;
     UIButton *_bestSellerBtn;
     
@@ -31,10 +34,17 @@
     int totalPage;
     int currentPage;
     TMQuiltView *qtmquitView;
+    TMQuiltView *qtmquitView_hot;
     
     NSMutableArray *firstView;
     NSMutableArray *fisrstView_Height;
-    NSMutableArray *secondView;
+    int r;
+    
+    NSMutableArray *lastestBtn;
+    NSMutableArray *lastestBtn_height;
+    NSMutableArray *hotestBtn;
+    NSMutableArray *hotestBtn_height;
+    // MayAppDelegate * app;
     
 }
 @property(nonatomic,retain)NSString *name_CategoryDetail;

@@ -40,9 +40,17 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    LastestOrHotest=YES;
     [self createNavigationBarItem];
     [self createSecondaryTab];//创建下方最新最棒
-    [self getMainArray];
+    [self getMainArray :@"lastest"];
+   // app = (MayAppDelegate *)[[UIApplication sharedApplication] delegate];
+    lastestBtn=[[NSMutableArray alloc]init];
+    hotestBtn=[[NSMutableArray alloc]init];
+    lastestBtn_height=[[NSMutableArray alloc]init];
+    hotestBtn_height=[[NSMutableArray alloc]init];
+    firstView=[[NSMutableArray alloc]init];
+    fisrstView_Height=[[NSMutableArray alloc]init];
 }
 - (void)viewWillAppear:(BOOL)animated
 {
@@ -51,9 +59,10 @@
     self.navigationItem.title =name_CategoryDetail;
     self. navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:UITextAttributeTextColor];//更改导航栏标题颜色 为白色
       qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 33 , 320, VIEW_HEIGHT)];
+      qtmquitView_hot = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 33 , 320, VIEW_HEIGHT)];
 }
 
--(void)getMainArray
+-(void)getMainArray :(NSString *)str
 {
     BOOL isNetWork=[CheckNetwork isExistenceNetwork];
     [Config Instance].isNetworkRunning = [CheckNetwork isExistenceNetwork];
@@ -68,36 +77,36 @@
     }
     else
     {
-    //http://www.maystall.com/index.php?route=mobile/ajax&action=product&product_id=36&type=lastest
+        //http://www.maystall.com/index.php?route=mobile/ajax&action=product&product_id=36&type=lastest
         NSString *string=[NSString stringWithFormat:@"%@",kBASEURL];
         NSURL *url = [ NSURL URLWithString :  string ];
         __block ASIFormDataRequest *request = [ ASIFormDataRequest requestWithURL :url];
         [request setRequestMethod:@"POST"];
         [request setPostValue:kPRODCUTS forKey:kACTION];
         [request setPostValue:ID_BtnTag forKey:kPRODUCT_ID];
-        [request setPostValue:@"lastest" forKey:@"type"];
+        [request setPostValue:str forKey:@"type"];
         NSLog(@"%d",[request responseStatusCode]);
         [request setCompletionBlock :^{
             NSString * response  =  [request responseString];
             SBJsonParser *parser = [[SBJsonParser alloc] init];
             NSDictionary *array = [parser objectWithString:response];
-            NSLog(@"%@",array);
-           [self creatWater:[array objectForKey:@"products"]];
-//            [self.view addSubview:qtmquitView];
-//            
+            //     NSLog(@"%@",array);
+            [self creatWater:[array objectForKey:@"products" ] isLast:str];
+            //            [self.view addSubview:qtmquitView];
+            //
         }];
         [request setFailedBlock :^{
-//            NSLog(@"HTTP 响应码：%d",[request responseStatusCode]);
-//            NSError *error = [request error ];
-//            NSLog ( @"error:%@" ,[error userInfo ]);
+            //            NSLog(@"HTTP 响应码：%d",[request responseStatusCode]);
+            //            NSError *error = [request error ];
+            //            NSLog ( @"error:%@" ,[error userInfo ]);
         }];
         [request startAsynchronous ];//异步
     }
 }
--(void)creatWater:(NSArray *)array
+-(void)creatWater:(NSArray *)array isLast:(NSString *)str
 {
-    firstView=[[NSMutableArray alloc]init];
-    fisrstView_Height=[[NSMutableArray alloc]init];
+NSMutableArray *View=[[NSMutableArray alloc]init];
+NSMutableArray *View_Height=[[NSMutableArray alloc]init];
     for(int i=0;i<array.count;i++)
     {
         NSDictionary *dict=[[NSDictionary alloc]init];
@@ -110,24 +119,34 @@
         [imageView setImageWithURL:[NSURL URLWithString: url]
                   placeholderImage:[UIImage imageNamed:@"moren.png"]
                            success:^(UIImage *image) {
-                            [firstView addObject:[array objectAtIndex:i]];
-                            [fisrstView_Height addObject:[NSString stringWithFormat:@"%f",image.size.height]];
-                           if(fisrstView_Height.count==array.count)
+                            [View addObject:[array objectAtIndex:i]];
+                            [View_Height addObject:[NSString stringWithFormat:@"%f",image.size.height]];
+                           if(View.count==array.count)
                            {
+                               firstView=View;
+                               fisrstView_Height=View_Height;
                                qtmquitView.delegate = self;
                                qtmquitView.dataSource = self;
                                [self.view addSubview:qtmquitView];
                                [qtmquitView reloadData];
                                [self createHeaderView];
                                [self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
-                               
+                               if([str isEqualToString:@"lastest"])
+                               {
+                                   lastestBtn=View;
+                                   lastestBtn_height=View_Height;
+                               }
+                               else
+                               {
+                                   hotestBtn=View;
+                                   hotestBtn_height=View_Height;
+                               }
                            }
                                NSLog(@"图片显示成功OK " );}
                            failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
     }
- 
 }
-//＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
+ //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 //初始化刷新视图
 //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
 #pragma mark
@@ -245,9 +264,20 @@
 //	for(int i = 0; i < 10; i++) {
 //		[_images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
 //	}
-	[qtmquitView reloadData];
+	//[qtmquitView reloadData];
+    if(LastestOrHotest)
+    {
+        firstView=lastestBtn;
+        fisrstView_Height=lastestBtn_height;
+    }
+    else
+    {
+        fisrstView_Height=hotestBtn_height;
+        firstView=hotestBtn;
+    }
     [self removeFooterView];
     [self testFinishedLoadData];
+    
 }
 
 #pragma mark -
@@ -307,7 +337,6 @@
 //}
 
 - (NSInteger)quiltViewNumberOfCells:(TMQuiltView *)TMQuiltView {
-    NSLog(@"%@===%@",firstView,fisrstView_Height);
     return [fisrstView_Height count];
 }
 
@@ -317,18 +346,17 @@
         cell = [[TMPhotoQuiltViewCell alloc] initWithReuseIdentifier:@"PhotoCell"];
     }
     NSDictionary *dict=[[NSDictionary alloc]init];
-    NSLog(@"%@",firstView);
     dict=[firstView objectAtIndex:indexPath.row];
-    NSLog(@"======%d",indexPath.row);
+    NSLog(@"======1");
     NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
     
     
     [cell.photoView setImageWithURL:[NSURL URLWithString: url]
                    placeholderImage:[UIImage imageNamed:@"moren.png"]
-                            success:^(UIImage *image) {  NSLog(@"图片显示成功OK%d ",indexPath.row);}
+                            success:^(UIImage *image) {  NSLog(@"======2"); NSLog(@"图片显示成功OK%d ",indexPath.row);}
                             failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
     cell.titleLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
-    
+     NSLog(@"======3");
     UIView *back=[[UIView alloc]init];
     back.backgroundColor=[UIColor whiteColor];
     back.frame=CGRectMake(0, 0, 145.0, 80);
@@ -363,7 +391,7 @@
     [back addSubview:love_total];
     
     
-    
+     NSLog(@"======4");
     [cell.view addSubview:back];    return cell;
 }
 
@@ -426,38 +454,57 @@
     _newestBtn = [[UIButton alloc] init];
     _newestBtn.titleLabel.Font = [UIFont fontWithName:@"Helvetica" size:12.0];
     _newestBtn.frame = CGRectMake(40, 6, titleSize.width += 10, 21);
+    _newestBtn.tag=100;
     [_newestBtn setBackgroundImage:[UIImage imageNamed:@"btn_wave_selected"] forState:UIControlStateSelected];
     [_newestBtn setTitleColor:TAB_COLOR_DARK forState:UIControlStateNormal];
     [_newestBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [_newestBtn setTitle:@"Newest" forState:UIControlStateNormal];
-    [_newestBtn addTarget:self action:@selector(newwestBtnSelected) forControlEvents:UIControlEventTouchUpInside];
+    [_newestBtn addTarget:self action:@selector(BtnSelected:) forControlEvents:UIControlEventTouchUpInside];
     _newestBtn.selected = YES;
     
     _bestSellerBtn = [[UIButton alloc] init];
     int marginRight = 320-40-titleSize.width-10;
+    _bestSellerBtn.tag=200;
     _bestSellerBtn.titleLabel.Font = [UIFont fontWithName:@"Helvetica" size:12.0];
     _bestSellerBtn.frame = CGRectMake(marginRight, 6, titleSize.width += 10, 21);
     [_bestSellerBtn setBackgroundImage:[UIImage imageNamed:@"btn_wave_selected"] forState:UIControlStateSelected];
     [_bestSellerBtn setTitleColor:TAB_COLOR_DARK forState:UIControlStateNormal];
     [_bestSellerBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [_bestSellerBtn setTitle:@"Bestseller" forState:UIControlStateNormal];
-    [_bestSellerBtn addTarget:self action:@selector(bestsellerBtnSelected) forControlEvents:UIControlEventTouchUpInside];
+    [_bestSellerBtn addTarget:self action:@selector(BtnSelected:) forControlEvents:UIControlEventTouchUpInside];
     
     [secondaryTabView addSubview:_newestBtn];
     [secondaryTabView addSubview:_bestSellerBtn];
     [self.view addSubview:secondaryTabView];
 }
 #pragma -mark button action
-- (void)newwestBtnSelected
-{
-    _newestBtn.selected = YES;
-    _bestSellerBtn.selected = NO;
-  }
 
-- (void)bestsellerBtnSelected
+- (void)BtnSelected:(id)sender
 {
-    _newestBtn.selected = NO;
-    _bestSellerBtn.selected = YES;
+    UIButton *btn=(UIButton *)sender;
+    [fisrstView_Height removeAllObjects];
+    [firstView removeAllObjects];
+    if(btn.tag==100)
+    {
+        LastestOrHotest=YES;
+        _newestBtn.selected = YES;
+        _bestSellerBtn.selected = NO;
+        [self getMainArray :@"lastest"];
+        
+    }
+    else
+    {
+        LastestOrHotest=NO;
+        _newestBtn.selected = NO;
+        _bestSellerBtn.selected = YES;
+       [self getMainArray :@"hotest"];
+    }
+    qtmquitView.delegate = self;
+    qtmquitView.dataSource = self;
+    [self.view addSubview:qtmquitView];
+    [qtmquitView reloadData];
+ 
+    
 }
 
 - (void)backToPreviousView
