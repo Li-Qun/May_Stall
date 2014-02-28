@@ -46,12 +46,10 @@
     BOOL _reloading;
     int totalPage;
     int currentPage;
+    TMQuiltView *qtmquitView;
+    
     AOTwoWaterView *_aoView;
     
-    
-    
-    
-    TMQuiltView *qtmquitView;
     NSMutableArray *images;
     NSArray *arr_images;
     

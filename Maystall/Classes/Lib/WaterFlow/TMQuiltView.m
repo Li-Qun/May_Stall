@@ -464,7 +464,8 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
             }
             (*top)--;
         }
-        
+    /*
+     //看这里 去掉就不会因为滑动 图片消失了
         // Harvest any any views that have moved off screen and add them to the reuse pool
         for (NSIndexPath* indexPath in [indexPathToView allKeys]) {
             TMQuiltViewCell *view = [indexPathToView objectForKey:indexPath];
@@ -480,7 +481,7 @@ NSString *const kDefaultReusableIdentifier = @"kTMQuiltViewDefaultReusableIdenti
                 //break;
             }
         }
-        
+     */
         // Move top and bottom if the cells they point to were harvested
         for (int j = 0; j < [indexPaths count]; j++) {
             if ([indexPathToView objectForKey:[indexPaths objectAtIndex:j]] != nil) {

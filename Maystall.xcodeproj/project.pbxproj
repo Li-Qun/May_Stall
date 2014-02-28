@@ -368,8 +368,8 @@
 		7149C668181F5EE6000957F6 /* UserCenterViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = UserCenterViewController.m; path = Maystall/Classes/UserCenterViewController.m; sourceTree = "<group>"; };
 		7149C66A181F6196000957F6 /* MoreViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = MoreViewController.h; path = Maystall/Classes/MoreViewController.h; sourceTree = "<group>"; };
 		7149C66B181F6196000957F6 /* MoreViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = MoreViewController.m; path = Maystall/Classes/MoreViewController.m; sourceTree = "<group>"; };
-		714AC61E1821FE5C00B0051C /* ProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductViewController.h; path = Classes/ProductViewController.h; sourceTree = "<group>"; };
-		714AC61F1821FE5C00B0051C /* ProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductViewController.m; path = Classes/ProductViewController.m; sourceTree = "<group>"; };
+		714AC61E1821FE5C00B0051C /* ProductViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ProductViewController.h; path = Maystall/Classes/ProductViewController.h; sourceTree = "<group>"; };
+		714AC61F1821FE5C00B0051C /* ProductViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ProductViewController.m; path = Maystall/Classes/ProductViewController.m; sourceTree = "<group>"; };
 		714AC6211821FF9F00B0051C /* btn_nav_back.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = btn_nav_back.png; path = Maystall/Resources/btn_nav_back.png; sourceTree = "<group>"; };
 		714AC6221821FF9F00B0051C /* btn_nav_back@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "btn_nav_back@2x.png"; path = "Maystall/Resources/btn_nav_back@2x.png"; sourceTree = "<group>"; };
 		714AC6251822065000B0051C /* btn_nav_home.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = btn_nav_home.png; sourceTree = "<group>"; };
@@ -826,8 +826,6 @@
 		713E78561821563300C26E5A /* ViewHome */ = {
 			isa = PBXGroup;
 			children = (
-				714AC61E1821FE5C00B0051C /* ProductViewController.h */,
-				714AC61F1821FE5C00B0051C /* ProductViewController.m */,
 				711B64161822C7E300D6E098 /* CommentViewController.h */,
 				711B64171822C7E300D6E098 /* CommentViewController.m */,
 				71571B071823527F0005FDD3 /* CommentCell.h */,
@@ -1261,6 +1259,8 @@
 		BB82D10D18BF48D800C5545B /* PushAnotherVC */ = {
 			isa = PBXGroup;
 			children = (
+				714AC61E1821FE5C00B0051C /* ProductViewController.h */,
+				714AC61F1821FE5C00B0051C /* ProductViewController.m */,
 				BB82D10E18BF495C00C5545B /* CategoryDetailViewController.h */,
 				BB82D10F18BF495C00C5545B /* CategoryDetailViewController.m */,
 			);

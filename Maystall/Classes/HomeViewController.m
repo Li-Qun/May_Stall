@@ -182,6 +182,8 @@
                                    [self.view addSubview:qtmquitView];
                                    [qtmquitView reloadData];
                                    [self createHeaderView];
+                                   [self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
+                                   
                                    
                                }
                                     NSLog(@"图片显示成功OK " );}
@@ -426,9 +428,9 @@
 //	for(int i = 0; i < 5; i++) {
 //		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
 //	}
-//	[qtmquitView reloadData];
-//    [self removeFooterView];
-//    [self testFinishedLoadData];
+	[qtmquitView reloadData];
+    [self removeFooterView];
+    [self testFinishedLoadData];
 }
 
 #pragma mark -

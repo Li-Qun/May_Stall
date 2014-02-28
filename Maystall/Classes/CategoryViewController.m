@@ -117,6 +117,7 @@
             if([[[dict_child objectAtIndex:j]objectForKey:@"category_id"]integerValue ]==btn.tag-BUTTON_TAG)
             {
                 view.name_CategoryDetail=[[dict_child objectAtIndex:j]objectForKey:@"name"];
+                view.ID_BtnTag=[[dict_child objectAtIndex:j]objectForKey:@"category_id"];
                 Flag=YES;
                 break;
             }
@@ -154,7 +155,7 @@
         [clothBtn setBackgroundImage:[UIImage imageNamed:@"btn_nav_back"] forState:UIControlStateNormal];
         
         clothScroll = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 30, 320, 90)];
-        [clothScroll setContentSize:CGSizeMake(600, 90)];
+        [clothScroll setContentSize:CGSizeMake(100*dict_child.count+320, 90)];
         for (int i = 0; i < dict_child.count; i++) {
             
             UIButton *image = [[UIButton alloc] initWithFrame:CGRectMake(0+i*100, 0, 100, 90)];
