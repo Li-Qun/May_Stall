@@ -9,7 +9,7 @@
 #import "SGFocusImageFrame.h"
 #import "SGFocusImageItem.h"
 #import <objc/runtime.h>
-#define ITEM_WIDTH 320.0
+#define ITEM_WIDTH 300.0
 
 @interface SGFocusImageFrame () {
     UIScrollView *_scrollView;
@@ -91,9 +91,9 @@ static CGFloat SWITCH_FOCUS_PICTURE_INTERVAL = 5.0; //switch interval time
     _scrollView = [[UIScrollView alloc] initWithFrame:self.bounds];
     _scrollView.scrollsToTop = NO;
     float space = 0;
-    CGSize size = CGSizeMake(320, 0);
+    CGSize size = CGSizeMake(300, 0);
     //    _pageControl = [[GPSimplePageView alloc] initWithFrame:CGRectMake(self.bounds.size.width *.5 - size.width *.5, self.bounds.size.height - size.height, size.width, size.height)];
-    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(120, self.frame.size.height -15, 320, 10)];
+    _pageControl = [[UIPageControl alloc] initWithFrame:CGRectMake(100, self.frame.size.height -15, 300, 10)];
     _pageControl.userInteractionEnabled = NO;
     [self addSubview:_scrollView];
     [self addSubview:_pageControl];
@@ -195,6 +195,7 @@ static CGFloat SWITCH_FOCUS_PICTURE_INTERVAL = 5.0; //switch interval time
         if ([self.delegate respondsToSelector:@selector(foucusImageFrame:didSelectItem:)]) {
             [self.delegate foucusImageFrame:self didSelectItem:item];
         }
+        NSLog(@"点击浏览的图片%d",page );
     }
 }
 

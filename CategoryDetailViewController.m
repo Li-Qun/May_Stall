@@ -2,12 +2,13 @@
 //  CategoryDetailViewController.m
 //  Maystall
 //
-//  Created by DAWEI FAN on 27/02/2014.
+//  Created by Liqun on 27/02/2014.
 //  Copyright (c) 2014 huiztech. All rights reserved.
 //
 
 #import "CategoryDetailViewController.h"
 #import "ProductViewController.h"
+#import "ProductIDViewController.h"
 
 #import "MayColorValue.h"
 #import "MayValue.h"
@@ -59,7 +60,6 @@
     self.navigationItem.title =name_CategoryDetail;
     self. navigationController.navigationBar.titleTextAttributes = [NSDictionary dictionaryWithObject:[UIColor whiteColor] forKey:UITextAttributeTextColor];//更改导航栏标题颜色 为白色
       qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 33 , 320, VIEW_HEIGHT)];
-      qtmquitView_hot = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 33 , 320, VIEW_HEIGHT)];
 }
 
 -(void)getMainArray :(NSString *)str
@@ -77,13 +77,13 @@
     }
     else
     {
-        //http://www.maystall.com/index.php?route=mobile/ajax&action=product&product_id=36&type=lastest
+       // http://www.maystall.com/index.php?route=mobile/ajax&action=products&path=64&debug=1
         NSString *string=[NSString stringWithFormat:@"%@",kBASEURL];
         NSURL *url = [ NSURL URLWithString :  string ];
         __block ASIFormDataRequest *request = [ ASIFormDataRequest requestWithURL :url];
         [request setRequestMethod:@"POST"];
         [request setPostValue:kPRODCUTS forKey:kACTION];
-        [request setPostValue:ID_BtnTag forKey:kPRODUCT_ID];
+        [request setPostValue:ID_BtnTag forKey: kPATH];
         [request setPostValue:str forKey:@"type"];
         NSLog(@"%d",[request responseStatusCode]);
         [request setCompletionBlock :^{
@@ -143,7 +143,28 @@ NSMutableArray *View_Height=[[NSMutableArray alloc]init];
                                }
                            }
                                NSLog(@"图片显示成功OK " );}
-                           failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
+                           failure:^(NSError *error) {
+                               
+                               firstView=View;
+                               fisrstView_Height=View_Height;
+                               qtmquitView.delegate = self;
+                               qtmquitView.dataSource = self;
+                               [self.view addSubview:qtmquitView];
+                               [qtmquitView reloadData];
+                               [self createHeaderView];
+                               [self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
+                               if([str isEqualToString:@"lastest"])
+                               {
+                                   lastestBtn=View;
+                                   lastestBtn_height=View_Height;
+                               }
+                               else
+                               {
+                                   hotestBtn=View;
+                                   hotestBtn_height=View_Height;
+                               }
+                               NSLog(@"图片显示失败NO");
+                           }];
     }
 }
  //＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝＝
@@ -375,7 +396,20 @@ NSMutableArray *View_Height=[[NSMutableArray alloc]init];
     UILabel *price_label=[[UILabel alloc]initWithFrame:CGRectMake(20,2, 59, 17)];
     price_label.textColor=TAB_COLOR_LIGHT;
     price_label.backgroundColor=[UIColor clearColor];
-    price_label.text=[dict objectForKey:@"price"];
+    
+    NSString *price_str=[dict objectForKey:@"price"];
+    NSString *special=[NSString stringWithFormat:@"%@",[dict objectForKey:@"special"]];
+    if([special isEqualToString:@"0"])
+    {
+        price_label.text=price_str;
+    }
+    else
+    {
+        price_label.text=special;
+    }
+
+    
+    
     price_label.font=[UIFont fontWithName:@"Helvetica" size:12.0];
     [price_ImageView addSubview:price_label];
     [back addSubview:price_ImageView];
@@ -409,10 +443,20 @@ NSMutableArray *View_Height=[[NSMutableArray alloc]init];
 
 - (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath
 {
-	NSLog(@"index:%d",indexPath.row);
-    ProductViewController *view=[[ProductViewController alloc] init];
+    NSDictionary *dict=[[NSDictionary alloc]init];
+    dict=[firstView objectAtIndex:indexPath.row];
+   // NSLog(@"====ID:%@",[dict objectForKey:@"product_id"]);
+//    ProductViewController *view=[[ProductViewController alloc] init];
+//    [self.navigationController pushViewController:view animated:YES];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+    
+    ProductIDViewController *view=[[ProductIDViewController alloc] init];
+    view.ID_Product=[dict objectForKey:@"product_id"];
+    view.Name_Product=[dict objectForKey:@"name"];
     [self.navigationController pushViewController:view animated:YES];
     [self dismissViewControllerAnimated:YES completion:nil];
+    
+    
 }
 - (void)didReceiveMemoryWarning
 {
@@ -497,14 +541,13 @@ NSMutableArray *View_Height=[[NSMutableArray alloc]init];
         LastestOrHotest=NO;
         _newestBtn.selected = NO;
         _bestSellerBtn.selected = YES;
-       [self getMainArray :@"hotest"];
+       [self getMainArray :@"hot"];
     }
     qtmquitView.delegate = self;
     qtmquitView.dataSource = self;
     [self.view addSubview:qtmquitView];
     [qtmquitView reloadData];
  
-    
 }
 
 - (void)backToPreviousView

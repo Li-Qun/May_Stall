@@ -31,7 +31,6 @@
 @end
 
 @implementation HomeViewController
-@synthesize images=images;
 
 - (id)initWithNibName:(NSString *)nibNameOrNil bundle:(NSBundle *)nibBundleOrNil
 {
@@ -47,12 +46,17 @@
     [super loadView];
 }- (void)viewDidLoad
 {
-
-
+    
+    
     [super viewDidLoad];
-    app = (MayAppDelegate *)[[UIApplication sharedApplication] delegate];
-    app.arrary_mul=[[NSMutableArray alloc]init];
-    app.arrary_height=[[NSMutableArray alloc]init];
+    //app = (MayAppDelegate *)[[UIApplication sharedApplication] delegate];
+    LastestOrHotest=YES;
+    lastestBtn=[[NSMutableArray alloc]init];
+    hotestBtn=[[NSMutableArray alloc]init];
+    lastestBtn_height=[[NSMutableArray alloc]init];
+    hotestBtn_height=[[NSMutableArray alloc]init];
+    firstView=[[NSMutableArray alloc]init];
+    fisrstView_Height=[[NSMutableArray alloc]init];
     [self setTabNavigationBarTitleWithText:@"home"];
     
     //适配ios7
@@ -61,9 +65,9 @@
         self.navigationController.navigationBar.translucent = NO;
     }
     [self getMainArray:@"latest"];                                    //VIEW_HEIGHT-178-44
-    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 178 , 320, VIEW_HEIGHT-178-44)];
-    qtmquitView.contentSize=CGSizeMake(0, 480);
-   // qtmquitView.contentSize=CGSizeMake(0, 1000);
+    qtmquitView = [[TMQuiltView alloc] initWithFrame:CGRectMake(0, 33 , 320, VIEW_HEIGHT-44-33)];
+   
+    // qtmquitView.contentSize=CGSizeMake(0, 1000);
     
     
     //测试 存取账号密码
@@ -72,27 +76,24 @@
     NSString *pwd = [Config Instance].getPwd;
     NSLog(@"name>>%@---- pwd>>%@",name,pwd);
     
-//    TestIPay88ViewController *view = [[TestIPay88ViewController alloc] init];
-//    [self.navigationController pushViewController:view animated:YES];
-//    [self dismissViewControllerAnimated:YES completion:nil];
+    //    TestIPay88ViewController *view = [[TestIPay88ViewController alloc] init];
+    //    [self.navigationController pushViewController:view animated:YES];
+    //    [self dismissViewControllerAnimated:YES completion:nil];
     
     
-//    LoginViewController *view = [[LoginViewController alloc] init];
-//    [self.navigationController pushViewController:view animated:YES];
-//    [self dismissViewControllerAnimated:YES completion:nil];
+    //    LoginViewController *view = [[LoginViewController alloc] init];
+    //    [self.navigationController pushViewController:view animated:YES];
+    //    [self dismissViewControllerAnimated:YES completion:nil];
     
-//    ProductDetailViewController *view = [[ProductDetailViewController alloc] init];
-//    [self.navigationController pushViewController:view animated:YES];
-    
-    [self createBannerView];//创建上方滚动图片
+    //    ProductDetailViewController *view = [[ProductDetailViewController alloc] init];
+    //    [self.navigationController pushViewController:view animated:YES];
     [self createSecondaryTab];//创建下方最新最棒
+    [self createBannerView];//创建上方滚动图片
+   
     
     //初始化数据
     totalPage = 0;
     currentPage = 1;
-    
-    self.totalArray = [[NSMutableArray alloc] init];
-    
 }
 
 - (void)viewWillAppear:(BOOL)animated
@@ -141,8 +142,7 @@
             NSString * response  =  [request responseString];
             SBJsonParser *parser = [[SBJsonParser alloc] init];
             NSDictionary *array = [parser objectWithString:response];
-            NSLog(@"%@",array);
-           [self creatWater:[array objectForKey:@"products"]];
+            [self creatWater:[array objectForKey:@"products" ] isLast:est_str];
             [self.view addSubview:qtmquitView];
             
         }];
@@ -152,80 +152,108 @@
             NSLog ( @"error:%@" ,[error userInfo ]);
         }];
         [request startAsynchronous ];//异步
-
-    
+        
+        
     }
 }
--(void)creatWater:(NSArray *)array
+-(void)creatWater:(NSArray *)array isLast:(NSString *)str
 {
- 
-    dispatch_async(dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0), ^{
-        for(int i=0;i<array.count;i++)
-        {
-            [app.arrary_mul addObject:[array objectAtIndex:i]];
-        }
-        for(int i=0;i<array.count;i++)
-        {
-            NSDictionary *dict=[[NSDictionary alloc]init];
-            dict=[app.arrary_mul objectAtIndex:i];
-            
-            NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
-            UIImageView *imageView=[[UIImageView alloc]init];
-            //        [imageView setImageWithURL:[NSURL URLWithString: url]];
-            //     [app.arrary_height addObject:[NSString stringWithFormat:@"%f",imageView.image.size.height]];
-            [imageView setImageWithURL:[NSURL URLWithString: url]
-                      placeholderImage:[UIImage imageNamed:@"moren.png"]
-                               success:^(UIImage *image) { [app.arrary_height addObject:[NSString stringWithFormat:@"%f",image.size.height]];if(app.arrary_height.count==array.count)
+    NSMutableArray *View=[[NSMutableArray alloc]init];
+    NSMutableArray *View_Height=[[NSMutableArray alloc]init];
+    for(int i=0;i<array.count;i++)
+    {
+        NSDictionary *dict=[[NSDictionary alloc]init];
+        dict=[array objectAtIndex:i];
+        
+        NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
+        UIImageView *imageView=[[UIImageView alloc]init];
+       
+        [imageView setImageWithURL:[NSURL URLWithString: url]
+                  placeholderImage:[UIImage imageNamed:@"moren.png"]
+                           success:^(UIImage *image) {
+                               [View addObject:[array objectAtIndex:i]];
+                               [View_Height addObject:[NSString stringWithFormat:@"%f",image.size.height]];
+                               if(View.count==array.count)
                                {
+                                   firstView=View;
+                                   fisrstView_Height=View_Height;
                                    qtmquitView.delegate = self;
                                    qtmquitView.dataSource = self;
                                    [self.view addSubview:qtmquitView];
                                    [qtmquitView reloadData];
                                    [self createHeaderView];
                                    [self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
-                                   
-                                   
+                                   if([str isEqualToString:@"lastest"])
+                                   {
+                                       lastestBtn=View;
+                                       lastestBtn_height=View_Height;
+                                   }
+                                   else
+                                   {
+                                       hotestBtn=View;
+                                       hotestBtn_height=View_Height;
+                                   }
                                }
-                                    NSLog(@"图片显示成功OK " );}
-                               failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
-            }
-        
-        
-        dispatch_async(dispatch_get_main_queue(), ^{//主线程
-            
-        
-            
-//            NSLog(@"%@",app.arrary_height);
-//            qtmquitView.delegate = self;
-//            qtmquitView.dataSource = self;
-//            
-//            [self.view addSubview:qtmquitView];
-//            [qtmquitView reloadData];
-//            [self createHeaderView];
-            
-        });
-    });
-    
+                               NSLog(@"图片显示成功OK " );}
+                           failure:^(NSError *error) {
+                               if(View.count==array.count)
+                               {
+                                   firstView=View;
+                                   fisrstView_Height=View_Height;
+                                   qtmquitView.delegate = self;
+                                   qtmquitView.dataSource = self;
+                                   [self.view addSubview:qtmquitView];
+                                   [qtmquitView reloadData];
+                                   [self createHeaderView];
+                                   [self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
+                                   if([str isEqualToString:@"lastest"])
+                                   {
+                                       lastestBtn=View;
+                                       lastestBtn_height=View_Height;
+                                   }
+                                   else
+                                   {
+                                       hotestBtn=View;
+                                       hotestBtn_height=View_Height;
+                                   }
+                               }
 
-  
-	//[self performSelector:@selector(testFinishedLoadData) withObject:nil afterDelay:0.0f];
+                               NSLog(@"图片显示失败NO");
+                           }];
+    }
 }
 #pragma -mark button action
-- (void)newwestBtnSelected
+- (void)BtnSelected:(id)sender
 {
-    _newestBtn.selected = YES;
-    _bestSellerBtn.selected = NO;
-    [self getMainArray:@"latest"];
+    UIButton *btn=(UIButton *)sender;
+    [fisrstView_Height removeAllObjects];
+    [firstView removeAllObjects];
+    if(btn.tag==100)
+    {
+        LastestOrHotest=YES;
+        _newestBtn.selected = YES;
+        _bestSellerBtn.selected = NO;
+        [self getMainArray :@"lastest"];
+        
+    }
+    else
+    {
+        LastestOrHotest=NO;
+        _newestBtn.selected = NO;
+        _bestSellerBtn.selected = YES;
+        [self getMainArray :@"hot"];
+    }
+    qtmquitView.delegate = self;
+    qtmquitView.dataSource = self;
+    [self.view addSubview:qtmquitView];
     [qtmquitView reloadData];
+    
+    
 }
 
-- (void)bestsellerBtnSelected
-{
-    _newestBtn.selected = NO;
-    _bestSellerBtn.selected = YES;
-    [self getMainArray:@"hot"];
-    [qtmquitView reloadData];
-}
+
+
+
 #pragma -mark add SubView
 
 - (void)createBannerView//上方五个滚动图片请求接口是什么
@@ -256,29 +284,31 @@
         [itemArray addObject:item];
     }
     
-    SGFocusImageFrame *bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(0, 0, 320, 140) delegate:self imageItems:itemArray isAuto:YES];
+    SGFocusImageFrame *bannerView = [[SGFocusImageFrame alloc] initWithFrame:CGRectMake(10,5, 300, 140) delegate:self imageItems:itemArray isAuto:YES];
     [bannerView scrollToIndex:2];
     
-    [self.view addSubview:bannerView];
+    [qtmquitView addSubview:bannerView];
 }
 
 -(void)createSecondaryTab//Home页面 最新 最好 的两个选择按钮
 {
-    UIView *secondaryTabView = [[UIView alloc] initWithFrame:CGRectMake(0, 140, 320, 33)];
+    UIView *secondaryTabView = [[UIView alloc] initWithFrame:CGRectMake(0, 0, 320, 33)];
     secondaryTabView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_btn_wave"]];
     
     CGSize titleSize = [@"Bestseller" sizeWithFont:[UIFont fontWithName:@"Helvetica" size:12.0]];
     _newestBtn = [[UIButton alloc] init];
+    _newestBtn.tag=100;
     _newestBtn.titleLabel.Font = [UIFont fontWithName:@"Helvetica" size:12.0];
     _newestBtn.frame = CGRectMake(40, 6, titleSize.width += 10, 21);
     [_newestBtn setBackgroundImage:[UIImage imageNamed:@"btn_wave_selected"] forState:UIControlStateSelected];
     [_newestBtn setTitleColor:TAB_COLOR_DARK forState:UIControlStateNormal];
     [_newestBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [_newestBtn setTitle:@"Newest" forState:UIControlStateNormal];
-    [_newestBtn addTarget:self action:@selector(newwestBtnSelected) forControlEvents:UIControlEventTouchUpInside];
+    [_newestBtn addTarget:self action:@selector(BtnSelected:) forControlEvents:UIControlEventTouchUpInside];
     _newestBtn.selected = YES;
     
     _bestSellerBtn = [[UIButton alloc] init];
+    _bestSellerBtn.tag=200;
     int marginRight = 320-40-titleSize.width-10;
     _bestSellerBtn.titleLabel.Font = [UIFont fontWithName:@"Helvetica" size:12.0];
     _bestSellerBtn.frame = CGRectMake(marginRight, 6, titleSize.width += 10, 21);
@@ -286,22 +316,22 @@
     [_bestSellerBtn setTitleColor:TAB_COLOR_DARK forState:UIControlStateNormal];
     [_bestSellerBtn setTitleColor:[UIColor whiteColor] forState:UIControlStateSelected];
     [_bestSellerBtn setTitle:@"Bestseller" forState:UIControlStateNormal];
-    [_bestSellerBtn addTarget:self action:@selector(bestsellerBtnSelected) forControlEvents:UIControlEventTouchUpInside];
+    [_bestSellerBtn addTarget:self action:@selector(BtnSelected:) forControlEvents:UIControlEventTouchUpInside];
     
     [secondaryTabView addSubview:_newestBtn];
     [secondaryTabView addSubview:_bestSellerBtn];
     [self.view addSubview:secondaryTabView];
 }
-
--(void)aowClick:(DataInfo *)data//代理方法的作用？？？？
-{
-    NSLog(@"...testing...  ...testing...");
-    NSLog(@" >>>  %@",data.name);
-
-    ProductViewController *view = [[ProductViewController alloc] init];
-    [self.navigationController pushViewController:view animated:YES];
-    [self dismissViewControllerAnimated:YES completion:nil];
-}
+//
+//-(void)aowClick:(DataInfo *)data//代理方法的作用？？？？
+//{
+//    NSLog(@"...testing...  ...testing...");
+//    NSLog(@" >>>  %@",data.name);
+//    
+//    ProductViewController *view = [[ProductViewController alloc] init];
+//    [self.navigationController pushViewController:view animated:YES];
+//    [self dismissViewControllerAnimated:YES completion:nil];
+//}
 
 ///@@@@@@@判断当前是否有网络  判断了吗
 //////waterflow  start
@@ -331,7 +361,7 @@
 }
 
 -(void)testFinishedLoadData{
-	
+    
     [self finishReloadingData];
     [self setFooterView];
 }
@@ -339,7 +369,7 @@
 #pragma mark -
 #pragma mark method that should be called when the refreshing is finished
 - (void)finishReloadingData{
-	
+    
 	//  model should call this when its done loading
 	_reloading = NO;
     
@@ -358,7 +388,8 @@
 -(void)setFooterView{
 	//    UIEdgeInsets test = self.aoView.contentInset;
     // if the footerView is nil, then create it, reset the position of the footer
-    CGFloat height = MAX(qtmquitView.contentSize.height, qtmquitView.frame.size.height);
+    CGFloat height = MAX(qtmquitView.contentSize.height+110, qtmquitView.frame.size.height);
+    NSLog(@"%f",height);
     if (_refreshFooterView && [_refreshFooterView superview])
 	{
         // reset position
@@ -380,6 +411,7 @@
 	{
         [_refreshFooterView refreshLastUpdatedDate];
     }
+    qtmquitView.contentSize=CGSizeMake(0, height-60);
 }
 
 
@@ -398,7 +430,7 @@
 #pragma mark data reloading methods that must be overide by the subclass
 
 -(void)beginToReloadData:(EGORefreshPos)aRefreshPos{
-	
+    
 	//  should be calling your tableviews data source model to reload
 	_reloading = YES;
     
@@ -411,7 +443,7 @@
         // pull up to load more data
         [self performSelector:@selector(getNextPageView) withObject:nil afterDelay:2.0];
     }
-	
+    
 	// overide, the actual loading data operation is done in the subclass
 }
 
@@ -420,17 +452,31 @@
 {
 	NSLog(@"刷新完成");
     [self testFinishedLoadData];
-	
+    
 }
 //加载调用的方法
 -(void)getNextPageView
 {
-//	for(int i = 0; i < 5; i++) {
-//		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
-//	}
-	[qtmquitView reloadData];
+    //	for(int i = 0; i < 5; i++) {
+    //		[images addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
+    //	}
+//	[qtmquitView reloadData];
+//    [self removeFooterView];
+//    [self testFinishedLoadData];
+    
+//    if(LastestOrHotest)
+//    {
+//        firstView=lastestBtn;
+//        fisrstView_Height=lastestBtn_height;
+//    }
+//    else
+//    {
+//        fisrstView_Height=hotestBtn_height;
+//        firstView=hotestBtn;
+//    }
     [self removeFooterView];
     [self testFinishedLoadData];
+
 }
 
 #pragma mark -
@@ -441,7 +487,7 @@
 	{
         [_refreshHeaderView egoRefreshScrollViewDidScroll:scrollView];
     }
-	
+    
 	if (_refreshFooterView)
 	{
         [_refreshFooterView egoRefreshScrollViewDidScroll:scrollView];
@@ -453,7 +499,7 @@
 	{
         [_refreshHeaderView egoRefreshScrollViewDidEndDragging:scrollView];
     }
-	
+    
 	if (_refreshFooterView)
 	{
         [_refreshFooterView egoRefreshScrollViewDidEndDragging:scrollView];
@@ -466,24 +512,24 @@
 
 - (void)egoRefreshTableDidTriggerRefresh:(EGORefreshPos)aRefreshPos
 {
-	
+    
 	[self beginToReloadData:aRefreshPos];
-	
+    
 }
 
 - (BOOL)egoRefreshTableDataSourceIsLoading:(UIView*)view{
-	
+    
 	return _reloading; // should return if data source model is reloading
-	
+    
 }
 
 
 // if we don't realize this method, it won't display the refresh timestamp
 - (NSDate*)egoRefreshTableDataSourceLastUpdated:(UIView*)view
 {
-	
+    
 	return [NSDate date]; // should return date data source was last changed
-	
+    
 }
 
 - (void)didReceiveMemoryWarning
@@ -492,45 +538,28 @@
     // Dispose of any resources that can be recreated.
 }
 
-//- (NSMutableArray *)images
-//{
-//    if (!images)
-//	{
-//        NSMutableArray *imageNames = [NSMutableArray array];
-//        for(int i = 0; i < 10; i++) {
-//            [imageNames addObject:[NSString stringWithFormat:@"%d.jpeg", i % 10 + 1]];
-//        }
-//        images =imageNames  ;
-//    }
-//    return images;
-//}
-
-
-//- (UIImage *)imageAtIndexPath:(NSIndexPath *)indexPath {
-//    return  [UIImage imageNamed:[self.images objectAtIndex:indexPath.row]];
-//}
-
 - (NSInteger)quiltViewNumberOfCells:(TMQuiltView *)TMQuiltView {
-    return app.arrary_mul.count;
+    return [fisrstView_Height count];
 }
 
 - (TMQuiltViewCell *)quiltView:(TMQuiltView *)quiltView cellAtIndexPath:(NSIndexPath *)indexPath {
-    
     TMPhotoQuiltViewCell *cell = (TMPhotoQuiltViewCell *)[quiltView dequeueReusableCellWithReuseIdentifier:@"PhotoCell"];
     if (!cell) {
         cell = [[TMPhotoQuiltViewCell alloc] initWithReuseIdentifier:@"PhotoCell"];
     }
+    NSLog(@"%@",firstView);
     NSDictionary *dict=[[NSDictionary alloc]init];
-    dict=[app.arrary_mul objectAtIndex:indexPath.row];
+    dict=[firstView objectAtIndex:indexPath.row];
+    NSLog(@"======1");
     NSString *url=[NSString stringWithFormat:@"%@image/%@",webImageURL,[dict objectForKey:@"thumb"]] ;
     
     
     [cell.photoView setImageWithURL:[NSURL URLWithString: url]
-                    placeholderImage:[UIImage imageNamed:@"moren.png"]
-                            success:^(UIImage *image) {  NSLog(@"图片显示成功OK%d ",indexPath.row);}
-                    failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
+                   placeholderImage:[UIImage imageNamed:@"moren.png"]
+                            success:^(UIImage *image) {  NSLog(@"======2"); NSLog(@"图片显示成功OK%d ",indexPath.row);}
+                            failure:^(NSError *error) {NSLog(@"资讯置顶图片显示失败NO");}];
     cell.titleLabel.text = [NSString stringWithFormat:@"%d", indexPath.row];
- 
+    NSLog(@"======3");
     UIView *back=[[UIView alloc]init];
     back.backgroundColor=[UIColor whiteColor];
     back.frame=CGRectMake(0, 0, 145.0, 80);
@@ -549,7 +578,17 @@
     UILabel *price_label=[[UILabel alloc]initWithFrame:CGRectMake(20,2, 59, 17)];
     price_label.textColor=TAB_COLOR_LIGHT;
     price_label.backgroundColor=[UIColor clearColor];
-    price_label.text=[dict objectForKey:@"price"];
+    
+    NSString *price_str=[dict objectForKey:@"price"];
+    NSString *special=[NSString stringWithFormat:@"%@",[dict objectForKey:@"special"]];
+    if([special isEqualToString:@"0"])
+    {
+        price_label.text=price_str;
+    }
+    else
+    {
+        price_label.text=special;
+    }
     price_label.font=[UIFont fontWithName:@"Helvetica" size:12.0];
     [price_ImageView addSubview:price_label];
     [back addSubview:price_ImageView];
@@ -565,39 +604,45 @@
     [back addSubview:love_total];
     
     
-    
-    [cell.view addSubview:back];
-    
-    
-    
-    return cell;
-    
+    NSLog(@"======4");
+    [cell.view addSubview:back];    return cell;
 }
 
 #pragma mark - TMQuiltViewDelegate
-
+- (CGFloat)quiltViewMargin:(TMQuiltView *)quilView marginType:(TMQuiltViewMarginType)marginType
+{
+    if(marginType==TMQuiltViewCellMarginRows )
+        return 80.0;
+   
+    if(marginType==TMQuiltViewCellMarginTop)
+        return 155.0;
+     return 10.0;
+}
 - (NSInteger)quiltViewNumberOfColumns:(TMQuiltView *)quiltView {
-	
     
-//    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
-//        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
-//	{
-//        return 2;
-//    }
-//    else {
-//        return 3;
-//    }
+    
+    //    if ([[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeLeft
+    //        || [[UIDevice currentDevice] orientation] == UIDeviceOrientationLandscapeRight)
+    //	{
+    //        return 2;
+    //    }
+    //    else {
+    //        return 3;
+    //    }
     return 2;
 }
 
 - (CGFloat)quiltView:(TMQuiltView *)quiltView heightForCellAtIndexPath:(NSIndexPath *)indexPath
 {
-    return [[app.arrary_height objectAtIndex:indexPath.row] integerValue] / [self quiltViewNumberOfColumns:quiltView];
+    return [[fisrstView_Height objectAtIndex:indexPath.row]integerValue] / [self quiltViewNumberOfColumns:quiltView];
 }
 
 - (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSLog(@"index:%d",indexPath.row);
+    ProductViewController *view=[[ProductViewController alloc] init];
+    [self.navigationController pushViewController:view animated:YES];
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 

@@ -17,7 +17,6 @@
 #import "EGORefreshTableHeaderView.h"
 #import "EGORefreshTableFooterView.h"
 
-#import "AOTwoWaterView.h"
 #import "MayValue.h"
 #import "TestIPay88ViewController.h"
 
@@ -30,11 +29,14 @@
 #import "TMPhotoQuiltViewCell.h"
 
 #import "MayAppDelegate.h"
-@interface HomeViewController : BaseViewController<SGFocusImageFrameDelegate,EGORefreshTableDelegate,AOTwoWaterViewDelegate,UIScrollViewDelegate,TMQuiltViewDataSource,TMQuiltViewDelegate>
+@interface HomeViewController : BaseViewController<SGFocusImageFrameDelegate,EGORefreshTableDelegate,UIScrollViewDelegate,TMQuiltViewDataSource,TMQuiltViewDelegate>
 {
     NSMutableArray *advList;
     
     //UIButton
+    BOOL LastestOrHotest;//yes is Lastest
+    BOOL Lastest;
+    BOOL Hotest;
     UIButton *_newestBtn;
     UIButton *_bestSellerBtn;
     
@@ -47,21 +49,20 @@
     int totalPage;
     int currentPage;
     TMQuiltView *qtmquitView;
+    TMQuiltView *qtmquitView_hot;
+   // MayAppDelegate * app;
     
-    AOTwoWaterView *_aoView;
+    NSMutableArray *firstView;
+    NSMutableArray *fisrstView_Height;
     
-    NSMutableArray *images;
-    NSArray *arr_images;
-    
-    MayAppDelegate * app;
+    NSMutableArray *lastestBtn;
+    NSMutableArray *lastestBtn_height;
+    NSMutableArray *hotestBtn;
+    NSMutableArray *hotestBtn_height;
+
 }
 
-@property(nonatomic,retain)AOTwoWaterView *aoView;
 
-@property(nonatomic,retain)NSMutableArray *totalArray;
 
-@property(strong,nonatomic)NSMutableArray *productArray;
-
-@property (nonatomic, retain) NSMutableArray *images;
 
 @end

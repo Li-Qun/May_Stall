@@ -2,7 +2,7 @@
 //  CategoryDetailViewController.h
 //  Maystall
 //
-//  Created by DAWEI FAN on 27/02/2014.
+//  Created by Liqun on 27/02/2014.
 //  Copyright (c) 2014 huiztech. All rights reserved.
 //
 
@@ -34,11 +34,9 @@
     int totalPage;
     int currentPage;
     TMQuiltView *qtmquitView;
-    TMQuiltView *qtmquitView_hot;
     
     NSMutableArray *firstView;
     NSMutableArray *fisrstView_Height;
-    int r;
     
     NSMutableArray *lastestBtn;
     NSMutableArray *lastestBtn_height;
