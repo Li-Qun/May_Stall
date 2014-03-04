@@ -10,7 +10,7 @@
 #import "MayColorValue.h"
 
 #define VIEW_HEIGHT         [UIScreen mainScreen].bounds.size.height - [UIApplication sharedApplication].statusBarFrame.size.height -44
-
+#define View_Bottom_Height  [UIScreen mainScreen].bounds.size.height
 
 @interface MayValue : NSObject
 

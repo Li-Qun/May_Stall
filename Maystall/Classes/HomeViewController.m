@@ -7,6 +7,7 @@
 //
 
 #import "HomeViewController.h"
+#import "ProductIDViewController.h"
 #import "MayColorValue.h"
 #import "Config.h"
 
@@ -640,9 +641,18 @@
 - (void)quiltView:(TMQuiltView *)quiltView didSelectCellAtIndexPath:(NSIndexPath *)indexPath
 {
 	NSLog(@"index:%d",indexPath.row);
-    ProductViewController *view=[[ProductViewController alloc] init];
-    [self.navigationController pushViewController:view animated:YES];
-    [self dismissViewControllerAnimated:YES completion:nil];
+    NSDictionary *dict=[[NSDictionary alloc]init];
+    dict=[firstView objectAtIndex:indexPath.row];
+    // NSLog(@"====ID:%@",[dict objectForKey:@"product_id"]);
+        ProductViewController *view=[[ProductViewController alloc] init];
+        [self.navigationController pushViewController:view animated:YES];
+        [self dismissViewControllerAnimated:YES completion:nil];
+    
+//    ProductIDViewController *view=[[ProductIDViewController alloc] init];
+//    view.ID_Product=[dict objectForKey:@"product_id"];
+//    view.Name_Product=[dict objectForKey:@"name"];
+//    [self.navigationController pushViewController:view animated:YES];
+//    [self dismissViewControllerAnimated:YES completion:nil];
 }
 
 

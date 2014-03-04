@@ -9,8 +9,7 @@
 #import "Singleton.h"
 
 @implementation Singleton
-@synthesize lastestBtn=lastestBtn;
-@synthesize lastestBtn_height=lastestBtn_height;
+@synthesize string_select=string_select;
 static Singleton * sharedSingleton = nil; //第一步：静态实例，并初始化。
 
 + (Singleton *) sharedInstance
@@ -54,8 +53,8 @@ static Singleton * sharedSingleton = nil; //第一步：静态实例，并初始
 -(id)init
 {
     @synchronized(self) {
-        lastestBtn=[[NSMutableArray alloc]init];
-        lastestBtn_height=[[NSMutableArray alloc]init];
+
+        string_select=[[NSString alloc]init];
         return self;
     }
 }

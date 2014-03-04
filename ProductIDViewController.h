@@ -8,10 +8,36 @@
 
 #import "BaseViewController.h"
 
-@interface ProductIDViewController : BaseViewController
+@interface ProductIDViewController : BaseViewController<UIScrollViewDelegate,UIWebViewDelegate>
 {
     NSString *ID_Product;
     NSString *Name_Product;
+    UIScrollView *scrollView;
+    
+    //产品描述、规格选项按钮
+    UIButton *_newestBtn;//图形描述
+    UIButton *_bestSellerBtn;//评论
+    UIWebView *webView_Information;
+    //高度临时增量
+    float height_ever;
+    UILabel *label_text;//图文文本；
+    
+    //选项卡按钮
+    UIButton *commentBtn;
+    UIButton *favoriteBtn;
+    UIButton *shareBtn;
+    UIButton *cartBtn;
+    //favorite 标签 isCarted 标签
+    BOOL isFavorited;
+    BOOL isCarted;
+    //cart board
+    UIView *view_Select;
+    NSArray *array_shape;
+    NSString *string_shape;
+    //两行按钮数组 颜色 尺寸
+    NSMutableArray *size_color_array;
+    UILabel *label_buy_Num;
+    
 }
 @property(nonatomic,retain) NSString *ID_Product;
 @property(nonatomic,retain)  NSString *Name_Product;

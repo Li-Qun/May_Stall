@@ -10,14 +10,10 @@
 
 @interface Singleton : NSObject
 {
-    NSMutableArray *lastestBtn;
-    NSMutableArray *lastestBtn_height;
-//    NSMutableArray *hotestBtn;
-//    NSMutableArray *hotestBtn_height;
+    NSString *string_select;
 }
 
 + (Singleton *) sharedInstance;
-@property(nonatomic,retain)     NSMutableArray *lastestBtn;
-@property(nonatomic,retain) NSMutableArray *lastestBtn_height;
+@property (nonatomic,retain)NSString *string_select;
 
 @end

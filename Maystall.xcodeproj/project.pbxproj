@@ -219,6 +219,7 @@
 		BBD8197018BDC900001A360A /* UIButton+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD8196418BDC900001A360A /* UIButton+WebCache.m */; };
 		BBD8197118BDC900001A360A /* UIImageView+WebCache.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD8196618BDC900001A360A /* UIImageView+WebCache.m */; };
 		BBD8197218BDC900001A360A /* UrlImageButton.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD8196818BDC900001A360A /* UrlImageButton.m */; };
+		BBE7FACC18C434DF008DB3BE /* CheckString.m in Sources */ = {isa = PBXBuildFile; fileRef = BBE7FACB18C434DF008DB3BE /* CheckString.m */; };
 		BEA9E7F018A87B5700078C8F /* AFHTTPClient.m in Sources */ = {isa = PBXBuildFile; fileRef = BEA9E7D918A87B5700078C8F /* AFHTTPClient.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		BEA9E7F118A87B5700078C8F /* AFHTTPRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BEA9E7DB18A87B5700078C8F /* AFHTTPRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
 		BEA9E7F218A87B5700078C8F /* AFImageRequestOperation.m in Sources */ = {isa = PBXBuildFile; fileRef = BEA9E7DD18A87B5700078C8F /* AFImageRequestOperation.m */; settings = {COMPILER_FLAGS = "-fno-objc-arc"; }; };
@@ -587,6 +588,8 @@
 		BBD8196618BDC900001A360A /* UIImageView+WebCache.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIImageView+WebCache.m"; sourceTree = "<group>"; };
 		BBD8196718BDC900001A360A /* UrlImageButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = UrlImageButton.h; sourceTree = "<group>"; };
 		BBD8196818BDC900001A360A /* UrlImageButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = UrlImageButton.m; sourceTree = "<group>"; };
+		BBE7FACA18C434DF008DB3BE /* CheckString.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CheckString.h; sourceTree = "<group>"; };
+		BBE7FACB18C434DF008DB3BE /* CheckString.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CheckString.m; sourceTree = "<group>"; };
 		BEA9E7D818A87B5700078C8F /* AFHTTPClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPClient.h; sourceTree = "<group>"; };
 		BEA9E7D918A87B5700078C8F /* AFHTTPClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFHTTPClient.m; sourceTree = "<group>"; };
 		BEA9E7DA18A87B5700078C8F /* AFHTTPRequestOperation.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFHTTPRequestOperation.h; sourceTree = "<group>"; };
@@ -1189,6 +1192,8 @@
 				71AAC48E187656180056B3F1 /* UrlValue.h */,
 				BEADA3C918A48C0A003E10F5 /* CheckNetwork.h */,
 				BEADA3CA18A48C0A003E10F5 /* CheckNetwork.m */,
+				BBE7FACA18C434DF008DB3BE /* CheckString.h */,
+				BBE7FACB18C434DF008DB3BE /* CheckString.m */,
 				BEADA3CC18A4CC1D003E10F5 /* Config.h */,
 				BEADA3CD18A4CC1D003E10F5 /* Config.m */,
 				BEAF68DA18A73E3D00292C13 /* GetHttpRequest.h */,
@@ -1679,6 +1684,7 @@
 				BEA9E7F618A87B5700078C8F /* AFOSCClient.m in Sources */,
 				BEADA3D818A4DF9A003E10F5 /* AESCrypt.m in Sources */,
 				BB52444918C095840083C6D1 /* Singleton.m in Sources */,
+				BBE7FACC18C434DF008DB3BE /* CheckString.m in Sources */,
 				71B234A21867FF4E002027FC /* DataInfo.m in Sources */,
 				71B33957182A4CBB00342243 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				71B2347E1867D755002027FC /* ASIAuthenticationDialog.m in Sources */,
