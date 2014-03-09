@@ -12,6 +12,7 @@
 #import "MayColorValue.h"
 #import "MayValue.h"
 #import "Config.h"
+#import "CutImage.h"
 
 #import "UIImageView+WebCache.h"
 #import "SBJson.h"
@@ -37,10 +38,15 @@
 - (void)viewDidLoad
 {
     [super viewDidLoad];
+    
     webView_Information=[[UIWebView alloc]init];
     array_shape=[[NSArray alloc]init];
     size_color_array=[[NSMutableArray alloc]init];
     label_buy_Num=[[UILabel alloc]init];
+    count_label=[[UILabel alloc]init];
+    totoal_BackGround=[[UIImageView alloc]init];
+    string_Numbers=@"0";
+    string_Money_total=@"0.00";
     scrollView=[[UIScrollView alloc]initWithFrame:CGRectMake(0, 0, 320, VIEW_HEIGHT)];
     scrollView.contentSize=CGSizeMake(0, 570);
     scrollView.delegate=self;
@@ -48,7 +54,6 @@
     [self.view addSubview:scrollView];
     [self createNavigationBarItem];
     [self getMainArray];
-    [self createBottomBar];
     [self cartView_board];//cart select board
 }
 -(void)viewWillAppear:(BOOL)animated
@@ -78,7 +83,7 @@
         __block ASIFormDataRequest *request = [ ASIFormDataRequest requestWithURL :url];
         [request setRequestMethod:@"POST"];
         [request setPostValue:kPRODCUT forKey:kACTION];
-         [request setPostValue:@"36" forKey:kPRODUCT_ID];//ID_Product
+         [request setPostValue:ID_Product forKey:kPRODUCT_ID];//ID_Product@"36"
          //NSLog(@"%d",[request responseStatusCode]);
         [request setCompletionBlock :^{
             NSString * response  =  [request responseString];
@@ -92,6 +97,16 @@
         [request startAsynchronous ];//异步
     }
 }
+- (UIImage*)imageWithImageSimple:(UIImage*)image scaledToSize:(CGSize)newSize
+{
+    // Create a graphics image context
+    UIGraphicsBeginImageContext(newSize);
+    
+    [image drawInRect:CGRectMake(0,0,newSize.width,newSize.height)];
+    UIImage* newImage = UIGraphicsGetImageFromCurrentImageContext();
+    UIGraphicsEndImageContext();
+    return newImage;
+}
 -(void)creatTheProductDetail:(NSDictionary *)dict
 {
     NSLog(@"%@",dict);
@@ -103,7 +118,10 @@
                    placeholderImage:[UIImage imageNamed:@"moren.png"]
                             success:^(UIImage *image) {
                                 NSLog(@"产品详细图片显示成功OK ");
-                                 image_Product.frame=CGRectMake(0, 0, 320,320.0/image.size.width*image.size.height);
+                                CGRect rect=[CutImage scaleImage:image toSize:CGRectMake(0.0, 0.0,300,320)];
+                                
+                                image_Product.frame=CGRectMake((320-rect.size.width)/2, 0, rect.size.width,rect.size.height);
+                      
                                 return ;
                             }
                             failure:^(NSError *error) {NSLog(@"产品详细图片显示失败NO");}];
@@ -116,6 +134,11 @@
     UILabel *label_Name=[[UILabel alloc]initWithFrame:CGRectMake(0, 0, 240, 44)];
     label_Name.backgroundColor=[UIColor orangeColor];
     label_Name.font=[UIFont fontWithName:@"Helvetica" size:13.0];
+    if([CheckString isBlankString:[dict objectForKey:@"name"] ])
+    {
+        label_Name.text=@"null";
+    }
+    else
     label_Name.text=[dict objectForKey:@"name"];
     label_Name.textColor=TAB_COLOR_LIGHT;
     label_Name.textAlignment=NSTextAlignmentCenter;
@@ -125,10 +148,14 @@
     label_Price.textColor=TAB_COLOR_LIGHT;
     label_Price.textAlignment=NSTextAlignmentCenter;
     
+ 
     NSString *stringMoney=[NSString stringWithFormat:@"%@",[dict objectForKey:@"special"]];
     BOOL isString=[CheckString isBlankString:[dict objectForKey:@"special"]];
     if(isString)//为空 显示price
     {
+        if([CheckString isBlankString:[dict objectForKey:@"price"]])
+        label_Price.text=@"0";
+        else
         label_Price.text=[dict objectForKey:@"price"];
     }
     else//special 不为空 显示 special 
@@ -136,28 +163,21 @@
         label_Price.text=stringMoney;
         
     }
+    string_Money_Single=label_Price.text;
     [imageView_NamePrice addSubview:label_Price];
     float height=image_Product.frame.size.height+44;
     height_ever=height;
     [self createSecondaryTab:height];//创建下方选择 评价 产品规格选项按钮
     
-    NSString *html=[dict objectForKey:@"intro"];
+    NSString *html;
+    if([CheckString isBlankString:[dict objectForKey:@"intro"]])
+    html=@"null";
+    else
+    html=[dict objectForKey:@"intro"];
+
     
-//    float fontSize=16.0;
-//    float line_height=18.0;
-  //  NSString *htmlString = [[NSString alloc] initWithContentsOfFile:filePath encoding:NSUTF8StringEncoding error:nil];
-//    html=[NSString stringWithFormat:@"<html> \n"
-//                     "<head> \n"
-//                     "<style type=\"text/css\"> \n"
-//                     "body {font-size:%fpx; line-height:%fpx;background-color: transparent;}\n"
-//                     "</style> \n"
-//                     "</head> \n"
-//                     "<body>%@</body> \n"
-//                     "</html>",  fontSize ,line_height,[dict objectForKey:@"intro"]];
-    
-    
-   html=[self htmlEntityDecode :html];
-NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
+    html=[self htmlEntityDecode :html];
+    NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
                           "<head> \n"
                           "<link href=\"default.css\" rel=\"stylesheet\" type=\"text/css\" /> \n"
                           "</head> \n"
@@ -168,6 +188,7 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
     
    [webView_Information loadHTMLString:bodyHTML  baseURL:[NSURL URLWithString:@"http://www.maystall.com/"]];
     webView_Information.delegate=self;
+   [self createBottomBar];
 }
 -(NSString *)htmlEntityDecode:(NSString *)string
 {
@@ -246,7 +267,7 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
 {
     int height = [UIScreen mainScreen].bounds.size.height - [UIApplication sharedApplication].statusBarFrame.size.height -44 -49;
     
-    UIView *bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, height, 320, 49)];
+    bottomView = [[UIView alloc] initWithFrame:CGRectMake(0, height, 320, 49)];
     //    bottomView.backgroundColor = [UIColor colorWithWhite:0.0 alpha:0.3];
     bottomView.backgroundColor = [UIColor colorWithPatternImage:[UIImage imageNamed:@"bg_bottom_tab"]];
     
@@ -413,9 +434,11 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
 - (void)cartBtnSelected
 {
     
+    
     if (isCarted) {
         isCarted = NO;
         cartBtn.selected = NO;
+ 
         
 //        [UIView animateWithDuration:0.3f animations:^{
 //            view_Select.frame=CGRectMake(0,View_Bottom_Height-49-44-20, 320, 0);
@@ -426,6 +449,8 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
         
         
     }else{
+        
+ 
         isCarted = YES;
         cartBtn.selected = YES;
         //NSLog(@"%@",array_shape);
@@ -450,20 +475,8 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
         if(array_shape.count==0)
         {
             height=100;
-//            UILabel *number_label=[[UILabel alloc]init];
-//            number_label.frame=CGRectMake(10, height+5, 100, 15);
-//            number_label.text=@"Number";
-//            number_label.Font = [UIFont fontWithName:@"Helvetica" size:13.0];
-//            [view_Select addSubview:number_label];
-//            UIImageView *number_left=[[UIImageView alloc]init];
-//            number_left.frame=CGRectMake(10, height+30, 30, 30);
-//            number_left.image=[UIImage imageNamed:@"buy_btn_left.png"];
-//            
-//            [view_Select addSubview:number_left];
-//            UIImageView *number_right=[[UIImageView alloc]init];
-//            number_right.frame=CGRectMake(100, height+30, 30, 30);
-//            number_right.image=[UIImage imageNamed:@"buy_btn_right.png"];
-//            [view_Select addSubview:number_right];
+            
+             
         }
         else
         {
@@ -503,44 +516,69 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
                 }
                 [size_color_array addObject:contain];
             }
+            
+            
+            UILabel *number_label=[[UILabel alloc]init];
+            number_label.frame=CGRectMake(10, height+5, 100, 15);
+            number_label.text=@"Number";
+            number_label.Font = [UIFont fontWithName:@"Helvetica" size:13.0];
+            [view_Select addSubview:number_label];
+            UIImageView *number_left=[[UIImageView alloc]init];
+            number_left.frame=CGRectMake(10, height+30, 40, 35);
+            number_left.image=[UIImage imageNamed:@"buy_btn_left.png"];
+            UIButton *subtract=[[UIButton alloc]initWithFrame:number_left.frame];
+            [subtract setImage: number_left.image forState:UIControlStateNormal];
+            [subtract addTarget:self action:@selector(Decrease) forControlEvents:UIControlEventTouchUpInside];
+            
+            [view_Select addSubview:subtract];
+            UIImageView *number_right=[[UIImageView alloc]init];
+            number_right.frame=CGRectMake(110, height+30, 40, 35);
+            UIButton *add=[[UIButton alloc]initWithFrame:number_right.frame];
+            number_right.image=[UIImage imageNamed:@"buy_btn_right.png"];
+            [add setImage: number_right.image forState:UIControlStateNormal];
+            [add addTarget:self action:@selector(Increase) forControlEvents:UIControlEventTouchUpInside];
+            
+            [view_Select addSubview:add];
+            
+            [self.view addSubview:view_Select];
+            
+            label_buy_Num.text=string_Numbers;
+
+            label_buy_Num.textAlignment=NSTextAlignmentCenter;
+            label_buy_Num.Font = [UIFont fontWithName:@"Helvetica" size:14.0];
+            label_buy_Num.backgroundColor=[UIColor whiteColor];
+            label_buy_Num.frame=CGRectMake(50, height+30, 60, 33);
+            [view_Select addSubview:label_buy_Num];
+            
+
         }
-        UILabel *number_label=[[UILabel alloc]init];
-        number_label.frame=CGRectMake(10, height+5, 100, 15);
-        number_label.text=@"Number";
-        number_label.Font = [UIFont fontWithName:@"Helvetica" size:13.0];
-        [view_Select addSubview:number_label];
-        UIImageView *number_left=[[UIImageView alloc]init];
-        number_left.frame=CGRectMake(10, height+30, 40, 35);
-        number_left.image=[UIImage imageNamed:@"buy_btn_left.png"];
-        UIButton *subtract=[[UIButton alloc]initWithFrame:number_left.frame];
-        [subtract setImage: number_left.image forState:UIControlStateNormal];
-        [subtract addTarget:self action:@selector(Decrease) forControlEvents:UIControlEventTouchUpInside];
-
-        [view_Select addSubview:subtract];
-        UIImageView *number_right=[[UIImageView alloc]init];
-        number_right.frame=CGRectMake(110, height+30, 40, 35);
-        UIButton *add=[[UIButton alloc]initWithFrame:number_right.frame];
-        number_right.image=[UIImage imageNamed:@"buy_btn_right.png"];
-        [add setImage: number_right.image forState:UIControlStateNormal];
-        [add addTarget:self action:@selector(Increase) forControlEvents:UIControlEventTouchUpInside];
-        
-        [view_Select addSubview:add];
-
-        [self.view addSubview:view_Select];
-        
-        label_buy_Num.text=@"1";
-        label_buy_Num.textAlignment=NSTextAlignmentCenter;
-        label_buy_Num.Font = [UIFont fontWithName:@"Helvetica" size:14.0];
-        label_buy_Num.backgroundColor=[UIColor whiteColor];
-        label_buy_Num.frame=CGRectMake(50, height+30, 60, 33);
-        [view_Select addSubview:label_buy_Num];
         
         
         [UIView animateWithDuration:0.3f animations:^{
-            view_Select.frame=CGRectMake(0,View_Bottom_Height-49-44-20-200, 320, 200);
+            view_Select.frame=CGRectMake(0,View_Bottom_Height-44-20-200-49, 320, 200+49);
         } completion:^(BOOL finished) {
-           
+            [bottomView removeFromSuperview];
         }];
+        
+        totoal_BackGround.frame=CGRectMake(0,view_Select.frame.size.height-49,320,49);
+        totoal_BackGround.backgroundColor=[UIColor whiteColor];
+        [view_Select addSubview:totoal_BackGround];
+        
+        UILabel *totalLabel_Word=[[UILabel alloc]initWithFrame:CGRectMake(2, 5, 80, 40)];
+        totalLabel_Word.backgroundColor=[UIColor redColor];
+        totalLabel_Word.text=@"Total (RM):";
+        totalLabel_Word.textAlignment=NSTextAlignmentCenter;
+        totalLabel_Word.Font = [UIFont fontWithName:@"Helvetica" size:14.0];
+        [totoal_BackGround addSubview:totalLabel_Word];
+        
+        count_label.frame=CGRectMake(85, 5,110 , 40);
+        count_label.backgroundColor=[UIColor grayColor];
+        count_label.textColor=TAB_COLOR_DARK ;
+        count_label.textAlignment=NSTextAlignmentCenter;
+        count_label.Font = [UIFont fontWithName:@"Helvetica" size:16.0];
+        count_label.text=string_Money_total;
+        [totoal_BackGround addSubview:count_label];
+
         
 
     }
@@ -590,24 +628,46 @@ NSString *bodyHTML = [NSString stringWithFormat:@"<html> \n"
     } completion:^(BOOL finished) {
         
         [view_Select removeFromSuperview];
+        [self.view addSubview:bottomView];
     }];
 }
 -(void)Decrease
 {
-    int num=[label_buy_Num.text integerValue];
+    int num=[string_Numbers integerValue];
     num--;
     if(num<=0)
     {
         num=0;
     }
-    label_buy_Num.text=[NSString stringWithFormat:@"%d",num];
+    string_Numbers=[NSString stringWithFormat:@"%d",num];
+    label_buy_Num.text=string_Numbers;
+    
+    float single_money=[string_Money_Single floatValue];
+    float total_money=[string_Money_Single floatValue];
+    total_money=single_money*num;
+    string_Money_total=[NSString stringWithFormat:@"%.2f",total_money];
+    
+    count_label.text=string_Money_total;
+    
+    [totoal_BackGround addSubview:count_label];
     [view_Select addSubview:label_buy_Num];
 }
 -(void)Increase
 {
-    int num=[label_buy_Num.text integerValue];
+    int num=[string_Numbers integerValue];
     num++;
-    label_buy_Num.text=[NSString stringWithFormat:@"%d",num];
+    string_Numbers=[NSString stringWithFormat:@"%d",num];
+    label_buy_Num.text=string_Numbers;
+    
+    
+    float single_money=[string_Money_Single floatValue];
+    float total_money=[string_Money_Single floatValue];
+    total_money=single_money*num;
+    string_Money_total=[NSString stringWithFormat:@"%.2f",total_money];
+    
+    count_label.text=string_Money_total;
+    
+    [totoal_BackGround addSubview:count_label];
     [view_Select addSubview:label_buy_Num];
 }
 - (void)browserMore

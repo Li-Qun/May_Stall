@@ -206,6 +206,7 @@
 		BB82D10A18BF3DA000C5545B /* price_Label.png in Resources */ = {isa = PBXBuildFile; fileRef = BB82D10818BF3DA000C5545B /* price_Label.png */; };
 		BB82D10B18BF3DA000C5545B /* price_Label@2X.png in Resources */ = {isa = PBXBuildFile; fileRef = BB82D10918BF3DA000C5545B /* price_Label@2X.png */; };
 		BB82D11018BF495C00C5545B /* CategoryDetailViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BB82D10F18BF495C00C5545B /* CategoryDetailViewController.m */; };
+		BBD3FBC518CC468A00A4E311 /* CutImage.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD3FBC318CC468A00A4E311 /* CutImage.m */; };
 		BBD4071518C1D46800E84115 /* ProductIDViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = BBD4071318C1D46800E84115 /* ProductIDViewController.m */; };
 		BBD4071618C1D46800E84115 /* ProductIDViewController.xib in Resources */ = {isa = PBXBuildFile; fileRef = BBD4071418C1D46800E84115 /* ProductIDViewController.xib */; };
 		BBD8190C18BD8F35001A360A /* moren.png in Resources */ = {isa = PBXBuildFile; fileRef = BBD8190B18BD8F35001A360A /* moren.png */; };
@@ -560,6 +561,8 @@
 		BB82D10918BF3DA000C5545B /* price_Label@2X.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "price_Label@2X.png"; sourceTree = "<group>"; };
 		BB82D10E18BF495C00C5545B /* CategoryDetailViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CategoryDetailViewController.h; sourceTree = "<group>"; };
 		BB82D10F18BF495C00C5545B /* CategoryDetailViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CategoryDetailViewController.m; sourceTree = "<group>"; };
+		BBD3FBC318CC468A00A4E311 /* CutImage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CutImage.m; sourceTree = "<group>"; };
+		BBD3FBC418CC468A00A4E311 /* CutImage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = CutImage.h; sourceTree = "<group>"; };
 		BBD4071218C1D46800E84115 /* ProductIDViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ProductIDViewController.h; sourceTree = "<group>"; };
 		BBD4071318C1D46800E84115 /* ProductIDViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ProductIDViewController.m; sourceTree = "<group>"; };
 		BBD4071418C1D46800E84115 /* ProductIDViewController.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = ProductIDViewController.xib; sourceTree = "<group>"; };
@@ -1187,6 +1190,8 @@
 		71B5E371187556270032CA42 /* Util */ = {
 			isa = PBXGroup;
 			children = (
+				BBD3FBC418CC468A00A4E311 /* CutImage.h */,
+				BBD3FBC318CC468A00A4E311 /* CutImage.m */,
 				71B5E375187556B90032CA42 /* MayColorValue.h */,
 				71B5E372187556480032CA42 /* MayValue.h */,
 				71AAC48E187656180056B3F1 /* UrlValue.h */,
@@ -1714,6 +1719,7 @@
 				711BAB1B181FA999003761D9 /* EGORefreshTableHeaderView.m in Sources */,
 				71611A61181E421F0015BF15 /* HomeTabbarViewController.m in Sources */,
 				BEA9E7F118A87B5700078C8F /* AFHTTPRequestOperation.m in Sources */,
+				BBD3FBC518CC468A00A4E311 /* CutImage.m in Sources */,
 				71611A5E181E22350015BF15 /* BaseViewController.m in Sources */,
 				716A0FEC1820AB6300DE84A1 /* EGORefreshTableFooterView.m in Sources */,
 				BB82D11018BF495C00C5545B /* CategoryDetailViewController.m in Sources */,
@@ -1876,8 +1882,8 @@
 				INFOPLIST_FILE = "Maystall/Maystall-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					/Users/daweifan/Liqun/May_Stall/Maystall/Classes/Lib,
-					/Users/daweifan/Liqun/May_Stall/Maystall/Classes/Lib/iPay88,
+					"$(SRCROOT)/Maystall/Classes/Lib",
+					"$(SRCROOT)/Maystall/Classes/Lib/iPay88",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -1900,8 +1906,8 @@
 				INFOPLIST_FILE = "Maystall/Maystall-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 6.0;
 				LIBRARY_SEARCH_PATHS = (
-					/Users/daweifan/Liqun/May_Stall/Maystall/Classes/Lib,
-					/Users/daweifan/Liqun/May_Stall/Maystall/Classes/Lib/iPay88,
+					"$(SRCROOT)/Maystall/Classes/Lib",
+					"$(SRCROOT)/Maystall/Classes/Lib/iPay88",
 				);
 				ONLY_ACTIVE_ARCH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
